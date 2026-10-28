@@ -4,6 +4,7 @@ import { demoProducts } from "@/lib/products";
 import { createClient } from "@/lib/supabase-server";
 import { createRazorpayOrder } from "@/lib/razorpay";
 import { validateAddressDetails } from "@/lib/pincode-validator";
+import { validateCoupon } from "@/lib/coupons";
 
 const checkoutSchema = z.object({
   customer: z.object({
@@ -99,16 +100,12 @@ export async function POST(req: Request) {
 
     const subtotal = orderLines.reduce((sum, line) => sum + line.line_total, 0);
 
-    // 3. Validate coupon code server-side
+    // 3. Validate coupon code server-side against database (with demo fallback)
     let discount = 0;
     if (couponCode) {
-      const cleanCoupon = couponCode.trim().toUpperCase();
-      if (cleanCoupon === "OWLFIRST10") {
-        discount = Math.min(Math.round(subtotal * 0.1), 500);
-      } else if (cleanCoupon === "SHINE200") {
-        if (subtotal >= 1999) {
-          discount = 200;
-        }
+      const couponRes = await validateCoupon(couponCode, subtotal);
+      if (couponRes.valid) {
+        discount = couponRes.discount;
       }
     }
 

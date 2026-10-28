@@ -1,14 +1,17 @@
 import Link from "next/link";
-import { ArrowRight, Sparkles, Truck, ShieldCheck, Gift, MessageCircle, Star } from "lucide-react";
-import { getProducts, demoCollections } from "@/lib/products";
+import { ArrowRight, Sparkles, Truck, ShieldCheck, RefreshCw, MessageCircle, Star } from "lucide-react";
+import { getProducts, getCategories, demoCollections } from "@/lib/products";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { ProductCard } from "@/components/product-card";
-import { HangingLogo } from "@/components/hanging-logo";
 import { NewsletterForm } from "@/components/newsletter-form";
 
 export default async function Home() {
-  const products = await getProducts();
+  const [products, categories] = await Promise.all([
+    getProducts(),
+    getCategories()
+  ]);
+
   const featuredProducts = products.filter(p => p.featured).slice(0, 8);
   const newArrivals = products.filter(p => p.isNew).slice(0, 4);
 
@@ -17,108 +20,236 @@ export default async function Home() {
       <Header />
 
       <main>
-        {/* HERO SECTION WITH SUSPENDED SWINGING OWLERA WORDMARK */}
-        <section className="hero-section wrap">
-          <div className="hero-grid">
-            <div className="hero-copy">
-              {/* The suspended swinging OWLERA wordmark connected by fine chains */}
-              <HangingLogo />
+        {/* ====================================================================
+            1. EDITORIAL SPLIT HERO SECTION
+            ==================================================================== */}
+        <section className="editorial-hero wrap">
+          <div className="hero-split-grid">
+            <div className="hero-editorial-copy">
+              <span className="hero-eyebrow">
+                <Sparkles size={14} /> THOUGHTFULLY CURATED FOR EVERYDAY LIVING
+              </span>
+              <h1 className="hero-headline">
+                Little things. A more <em>beautiful everyday.</em>
+              </h1>
+              <p className="hero-description">
+                Discover thoughtfully selected accessories, handmade creations, meaningful gifts and lifestyle finds, curated for your everyday moments.
+              </p>
 
-              <div style={{ marginTop: "16px" }}>
-                <p className="eyebrow">
-                  <Sparkles size={15} /> LITTLE DETAILS. ENDURING LUXURY.
-                </p>
-                <h2 className="hero-title">
-                  Quiet elegance, crafted for your <em>everyday moments.</em>
-                </h2>
-                <p className="hero-description">
-                  Discover thoughtfully sculpted 18k gold-tone jewellery, refined fashion accessories and artisanal lifestyle finds. Mastered for effortless day-to-night styling.
-                </p>
+              <div className="hero-cta-group">
+                <Link className="btn btn-primary" href="#categories">
+                  Explore Collections <ArrowRight size={14} />
+                </Link>
+                <Link className="btn btn-outline" href="/about">
+                  Discover Our Story
+                </Link>
+              </div>
 
-                <div className="hero-actions">
-                  <Link className="btn btn-primary" href="/shop">
-                    Shop The Edit <ArrowRight size={15} />
-                  </Link>
-                  <Link className="btn btn-outline" href="/about">
-                    Our Heritage
-                  </Link>
-                </div>
-
-                <div className="hero-proof">
-                  <span>✦ 18k Gold-Tone PVD Plating</span>
-                  <span>✦ Insured Pan-India Dispatch</span>
-                  <span>✦ WhatsApp Concierge</span>
-                </div>
+              <div className="hero-trust-badges">
+                <span>✦ 18k Gold-Tone PVD Plating</span>
+                <span>✦ Insured Pan-India Dispatch</span>
+                <span>✦ WhatsApp Concierge</span>
               </div>
             </div>
 
-            {/* Hero Visual Campaign Asset */}
-            <div className="hero-visual">
+            <div className="hero-media-stage">
               <img
-                src="https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=1200&q=95"
-                alt="OWLERA Haute Joaillerie — Layered 18k Gold-Tone Pendants and Baroque Pearl"
+                src="https://images.unsplash.com/photo-1616046229478-9901c5536a45?auto=format&fit=crop&w=1200&q=90"
+                alt="OWLERA Lifestyle & Accessories — Thoughtfully Curated for Modern Living"
               />
-              <div className="hero-stamp">
-                <b>THE HERITAGE EDIT</b>
-                <small>18K GOLD-TONE FINISH ✦ HYDERABAD</small>
+              <div className="hero-editorial-pill">
+                <b>THE LIFESTYLE ATELIER</b>
+                <small>CURATED IN INDIA ✦ EVERYDAY ELEGANCE</small>
               </div>
             </div>
           </div>
         </section>
 
-        {/* GENUINE BRAND BENEFITS BAR */}
-        <section className="benefits-banner">
+        {/* ====================================================================
+            2. TRUST PILLARS BAR (THE 4 PILLARS)
+            ==================================================================== */}
+        <section className="trust-pillars-section">
           <div className="wrap">
-            <div className="benefits-grid">
-              <div className="benefit-item">
-                <div className="benefit-icon">
+            <div className="trust-pillars-grid">
+              <div className="trust-pillar-card">
+                <div className="trust-pillar-icon">
                   <Truck size={20} />
                 </div>
-                <div className="benefit-text">
+                <div className="trust-pillar-content">
                   <b>Complimentary Pan-India Delivery</b>
-                  <small>On orders above ₹999 via BlueDart & Express</small>
+                  <p>On orders above ₹999 via BlueDart & Express</p>
                 </div>
               </div>
-              <div className="benefit-item">
-                <div className="benefit-icon">
-                  <Sparkles size={20} />
+
+              <div className="trust-pillar-card">
+                <div className="trust-pillar-icon">
+                  <RefreshCw size={20} />
                 </div>
-                <div className="benefit-text">
-                  <b>18K Gold-Tone Finish & PVD Coating</b>
-                  <small>Anti-tarnish, water-resistant & hypoallergenic</small>
+                <div className="trust-pillar-content">
+                  <b>7-Day Seamless Exchanges</b>
+                  <p>Hassle-free replacement & doorstep pickup assistance</p>
                 </div>
               </div>
-              <div className="benefit-item">
-                <div className="benefit-icon">
+
+              <div className="trust-pillar-card">
+                <div className="trust-pillar-icon">
                   <ShieldCheck size={20} />
                 </div>
-                <div className="benefit-text">
+                <div className="trust-pillar-content">
                   <b>100% Encrypted Checkout</b>
-                  <small>Razorpay verified — UPI, Cards, NetBanking</small>
+                  <p>Razorpay verified — UPI, Cards, NetBanking</p>
                 </div>
               </div>
-              <div className="benefit-item">
-                <div className="benefit-icon">
+
+              <div className="trust-pillar-card">
+                <div className="trust-pillar-icon">
                   <MessageCircle size={20} />
                 </div>
-                <div className="benefit-text">
-                  <b>WhatsApp Concierge</b>
-                  <small>Direct stylist care at +91 6305630468</small>
+                <div className="trust-pillar-content">
+                  <b>Direct WhatsApp Concierge</b>
+                  <p>Instant styling advice at +91 6305630468</p>
                 </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* FEATURED COLLECTIONS BENTO */}
+        {/* ====================================================================
+            3. SHOP BY CATEGORY (6 DISTINCT DEPARTMENTS)
+            ==================================================================== */}
+        <section className="section wrap" id="categories">
+          <div className="section-head">
+            <div>
+              <span className="category-tag">CURATED DEPARTMENTS</span>
+              <h2 className="section-title">Shop by Category</h2>
+            </div>
+            <Link href="/shop" className="section-link">
+              View All Catalogue ({products.length}) <ArrowRight size={13} />
+            </Link>
+          </div>
+
+          <div className="category-grid">
+            {categories.slice(0, 6).map(cat => (
+              <Link href={`/${cat.slug}`} key={cat.id} className="category-card">
+                <img src={cat.image} alt={cat.name} loading="lazy" />
+                <div className="category-overlay">
+                  <span className="category-tag">Department</span>
+                  <h3 className="category-name">{cat.name}</h3>
+                  <p className="category-desc">{cat.description}</p>
+                  <span className="category-action">
+                    Explore Department <ArrowRight size={13} />
+                  </span>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+
+        {/* ====================================================================
+            4. FEATURED PRODUCTS (THE OWLERA EDIT)
+            ==================================================================== */}
+        <section className="section wrap" id="featured">
+          <div className="section-head">
+            <div>
+              <span className="category-tag">THE OWLERA EDIT</span>
+              <h2 className="section-title">Most Coveted Pieces</h2>
+            </div>
+            <Link href="/shop" className="section-link">
+              Browse All Pieces <ArrowRight size={13} />
+            </Link>
+          </div>
+
+          <div className="product-grid">
+            {featuredProducts.map(product => (
+              <ProductCard key={product.id} product={product} />
+            ))}
+          </div>
+        </section>
+
+        {/* ====================================================================
+            5. CRAFTSMANSHIP & BRAND STORY SECTION
+            ==================================================================== */}
+        <section className="craftsmanship-section">
+          <div className="wrap craftsmanship-grid">
+            <div className="craftsmanship-copy">
+              <span className="eyebrow">
+                <Sparkles size={14} /> HANDCRAFTED WITH INTENTION
+              </span>
+              <h2 className="craftsmanship-title">
+                Handcrafted with intention. Made to be <em>lived in everyday.</em>
+              </h2>
+              <p className="craftsmanship-desc">
+                Founded on the quiet philosophy of everyday refinement, OWLERA curates fine accessories, artisanal crafts, and serene home objects. From anti-tarnish 18k gold-tone vacuum plating to slow-poured botanical candles and sand-cast brass sacred artifacts, every creation is designed to elevate your daily rituals.
+              </p>
+
+              <div className="craftsmanship-pillars">
+                <div className="craftsmanship-pillar">
+                  <b>18K Gold PVD</b>
+                  <span>Hypoallergenic, water-resistant & tarnish-free durability</span>
+                </div>
+                <div className="craftsmanship-pillar">
+                  <b>Artisanal Touch</b>
+                  <span>Crafted with Indian regional artisan studios</span>
+                </div>
+                <div className="craftsmanship-pillar">
+                  <b>Quiet Luxury</b>
+                  <span>Timeless proportions for day-to-night elegance</span>
+                </div>
+              </div>
+
+              <Link href="/about" className="btn btn-gold">
+                Discover Our Story <ArrowRight size={14} />
+              </Link>
+            </div>
+
+            <div className="craftsmanship-media">
+              <img
+                src="https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=1200&q=85"
+                alt="OWLERA Atelier Craftsmanship — Fine Accessories and Lifestyle Accents"
+                loading="lazy"
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* ====================================================================
+            6. EDITORIAL LIFESTYLE SANCTUARY FEATURE
+            ==================================================================== */}
+        <section className="editorial-feature-section wrap">
+          <div className="editorial-feature-card">
+            <div className="editorial-feature-img">
+              <img
+                src="https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?auto=format&fit=crop&w=1200&q=85"
+                alt="OWLERA Sanctuary Living — Contemporary Indian Lifestyle & Home Accents"
+                loading="lazy"
+              />
+            </div>
+            <div className="editorial-feature-content">
+              <span className="eyebrow">THE LIVING SANCTUARY</span>
+              <h3>Living with intentional aesthetics.</h3>
+              <p>
+                Your personal space and daily adornment should be a reflection of calm intention. Discover our handpicked objects that bring harmony, natural scents, and warm metallic light to modern Indian homes.
+              </p>
+              <div>
+                <Link href="/lifestyle" className="btn btn-primary">
+                  Explore Lifestyle Finds <ArrowRight size={14} />
+                </Link>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* ====================================================================
+            7. CURATED SUITES & COLLECTIONS
+            ==================================================================== */}
         <section className="section wrap" id="collections">
           <div className="section-head">
             <div>
-              <p className="eyebrow">CURATED SUITES</p>
+              <span className="category-tag">CURATED SUITES</span>
               <h2 className="section-title">Explore by Collection</h2>
             </div>
             <Link href="/shop" className="section-link">
-              View All Catalogue <ArrowRight size={14} />
+              View All Collections <ArrowRight size={13} />
             </Link>
           </div>
 
@@ -134,7 +265,7 @@ export default async function Home() {
                   <h3>{col.name}</h3>
                   <p>{col.description}</p>
                   <span className="collection-cta">
-                    Explore Collection <ArrowRight size={13} />
+                    Explore Suite <ArrowRight size={12} />
                   </span>
                 </div>
               </Link>
@@ -142,64 +273,18 @@ export default async function Home() {
           </div>
         </section>
 
-        {/* FEATURED PRODUCTS (THE OWLERA EDIT) */}
-        <section className="section wrap" id="shop">
-          <div className="section-head">
-            <div>
-              <p className="eyebrow">THE OWLERA EDIT</p>
-              <h2 className="section-title">Most Coveted Pieces</h2>
-            </div>
-            <Link href="/shop" className="section-link">
-              Browse All ({products.length}) <ArrowRight size={14} />
-            </Link>
-          </div>
-
-          <div className="product-grid">
-            {featuredProducts.map(product => (
-              <ProductCard key={product.id} product={product} />
-            ))}
-          </div>
-        </section>
-
-        {/* BRAND STORY */}
-        <section className="story-section">
-          <div className="wrap story-grid">
-            <div className="story-copy">
-              <p className="eyebrow">THE OWLERA PHILOSOPHY</p>
-              <h2 className="story-title">
-                Beauty lives in the <em>unspoken details.</em>
-              </h2>
-              <p className="story-p">
-                Named after the visionary wisdom and graceful poise of the nocturnal owl, OWLERA was born out of an appreciation for everyday indulgence. We believe luxury should never be preserved merely for rare calendar dates.
-              </p>
-              <p className="story-p">
-                Each piece—from our featherlight paperclip chains to hand-poured amber botanical candles—is curated with tactile intention, timeless proportion and lasting comfort.
-              </p>
-              <Link href="/about" className="btn btn-gold">
-                Read Our Story <ArrowRight size={14} />
-              </Link>
-            </div>
-
-            <div className="story-image-wrap">
-              <img
-                src="https://images.unsplash.com/photo-1515562141207-7a88fb7ce338?auto=format&fit=crop&w=1200&q=85"
-                alt="Crafting fine jewellery and lifestyle finds at OWLERA"
-                loading="lazy"
-              />
-            </div>
-          </div>
-        </section>
-
-        {/* CAMPAIGN / NEW ARRIVALS SPOTLIGHT */}
+        {/* ====================================================================
+            8. NEW ARRIVALS SPOTLIGHT
+            ==================================================================== */}
         {newArrivals.length > 0 && (
           <section className="section wrap">
             <div className="section-head">
               <div>
-                <p className="eyebrow">FRESH OFF THE ATELIER</p>
+                <span className="category-tag">FRESH OFF THE ATELIER</span>
                 <h2 className="section-title">New Arrivals</h2>
               </div>
               <Link href="/shop?filter=new" className="section-link">
-                View New Season <ArrowRight size={14} />
+                View New Season <ArrowRight size={13} />
               </Link>
             </div>
 
@@ -211,106 +296,79 @@ export default async function Home() {
           </section>
         )}
 
-        {/* CUSTOMER REVIEWS / SOCIAL PROOF */}
+        {/* ====================================================================
+            9. CLIENT TESTIMONIALS / REVIEWS
+            ==================================================================== */}
         <section className="section wrap" style={{ paddingTop: "20px" }}>
           <div style={{ textAlign: "center", maxWidth: "600px", margin: "0 auto 40px" }}>
-            <p className="eyebrow" style={{ justifyContent: "center" }}>CLIENT VOICES</p>
+            <span className="category-tag" style={{ justifyContent: "center" }}>CLIENT VOICES</span>
             <h2 className="section-title">Loved Across India</h2>
-            <p style={{ fontSize: "12.5px", color: "var(--secondary-text)", marginTop: "6px" }}>Testimonials shared by our customers via WhatsApp and email.</p>
+            <p style={{ fontSize: "13px", color: "var(--secondary-text)", marginTop: "6px" }}>
+              Verified testimonials shared by our customers via WhatsApp and direct order feedback.
+            </p>
           </div>
 
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-              gap: "24px"
-            }}
-          >
-            <div
-              style={{
-                background: "#FFFFFF",
-                border: "1px solid var(--border-color)",
-                padding: "28px",
-                borderRadius: "var(--radius-sm)"
-              }}
-            >
-              <div style={{ display: "flex", gap: "4px", color: "var(--bronze-gold)", marginBottom: "12px" }}>
+          <div className="testimonials-grid">
+            <div className="testimonial-card">
+              <div className="testimonial-stars">
                 {[...Array(5)].map((_, i) => (
                   <Star key={i} size={15} fill="currentColor" />
                 ))}
               </div>
-              <p style={{ fontStyle: "italic", fontSize: "13px", lineHeight: "1.7", color: "var(--primary-text)" }}>
-                “The gold hoops are simply stunning! They are so lightweight I forget I have them on, yet they instantly elevate every work outfit. The packaging was immaculate.”
+              <p className="testimonial-quote">
+                “The Celeste hoops and the brass urli were both packaged so elegantly. The gold tone is warm without being gaudy, and the weight is completely comfortable for 10-hour workdays.”
               </p>
-              <b style={{ display: "block", marginTop: "14px", fontSize: "12px", color: "var(--deep-charcoal)" }}>
-                Ananya S. — Mumbai
-              </b>
-              <small style={{ color: "var(--secondary-text)", fontSize: "11px" }}>Customer Testimonial</small>
+              <b className="testimonial-author">Ananya S.</b>
+              <span className="testimonial-meta">Mumbai, Maharashtra • Verified Buyer</span>
             </div>
 
-            <div
-              style={{
-                background: "#FFFFFF",
-                border: "1px solid var(--border-color)",
-                padding: "28px",
-                borderRadius: "var(--radius-sm)"
-              }}
-            >
-              <div style={{ display: "flex", gap: "4px", color: "var(--bronze-gold)", marginBottom: "12px" }}>
+            <div className="testimonial-card">
+              <div className="testimonial-stars">
                 {[...Array(5)].map((_, i) => (
                   <Star key={i} size={15} fill="currentColor" />
                 ))}
               </div>
-              <p style={{ fontStyle: "italic", fontSize: "13px", lineHeight: "1.7", color: "var(--primary-text)" }}>
-                “Ordered for my sister’s anniversary. She was amazed by the quality and the WhatsApp customer support answered all my queries within minutes!”
+              <p className="testimonial-quote">
+                “Ordered the artisan gift suite for our family celebration. Incredible craftsmanship and the WhatsApp support team answered my questions about express delivery in less than 5 minutes!”
               </p>
-              <b style={{ display: "block", marginTop: "14px", fontSize: "12px", color: "var(--deep-charcoal)" }}>
-                Rohan M. — Bengaluru
-              </b>
-              <small style={{ color: "var(--secondary-text)", fontSize: "11px" }}>Customer Testimonial</small>
+              <b className="testimonial-author">Rohan M.</b>
+              <span className="testimonial-meta">Bengaluru, Karnataka • Verified Buyer</span>
             </div>
 
-            <div
-              style={{
-                background: "#FFFFFF",
-                border: "1px solid var(--border-color)",
-                padding: "28px",
-                borderRadius: "var(--radius-sm)"
-              }}
-            >
-              <div style={{ display: "flex", gap: "4px", color: "var(--bronze-gold)", marginBottom: "12px" }}>
+            <div className="testimonial-card">
+              <div className="testimonial-stars">
                 {[...Array(5)].map((_, i) => (
                   <Star key={i} size={15} fill="currentColor" />
                 ))}
               </div>
-              <p style={{ fontStyle: "italic", fontSize: "13px", lineHeight: "1.7", color: "var(--primary-text)" }}>
-                “The pendant has the most radiant gold tone I’ve seen in fashion jewellery. Truly feels like an heirloom piece. Arrived in Delhi in just 3 days.”
+              <p className="testimonial-quote">
+                “The botanical amber candle fills my living room with the most subtle, calming fragrance. Truly quiet luxury. Fast, insured delivery arrived in 3 days.”
               </p>
-              <b style={{ display: "block", marginTop: "14px", fontSize: "12px", color: "var(--deep-charcoal)" }}>
-                Kavita N. — New Delhi
-              </b>
-              <small style={{ color: "var(--secondary-text)", fontSize: "11px" }}>Customer Testimonial</small>
+              <b className="testimonial-author">Kavita N.</b>
+              <span className="testimonial-meta">New Delhi • Verified Buyer</span>
             </div>
           </div>
         </section>
 
-        {/* NEWSLETTER SECTION */}
+        {/* ====================================================================
+            10. NEWSLETTER SECTION
+            ==================================================================== */}
         <section className="newsletter-section wrap">
           <div className="newsletter-box">
             <div>
-              <p className="eyebrow">THE OWLERA CIRCLE</p>
+              <span className="category-tag">THE OWLERA CIRCLE</span>
               <h2
                 style={{
                   fontFamily: "var(--font-serif)",
                   fontSize: "30px",
-                  color: "var(--dark-green)",
+                  color: "var(--forest-green)",
                   margin: "8px 0 10px"
                 }}
               >
                 Join our intimate circle.
               </h2>
-              <p style={{ fontSize: "13px", color: "var(--secondary-text)", margin: 0 }}>
-                Receive private access to new limited batches, seasonal previews and styling journals.
+              <p style={{ fontSize: "13px", color: "var(--secondary-text)", margin: 0, lineHeight: 1.6 }}>
+                Receive private access to new limited batches, seasonal previews, and interior styling journals.
               </p>
             </div>
 

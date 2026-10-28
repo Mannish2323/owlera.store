@@ -22,7 +22,7 @@ interface CartContextType {
   add: (product: Product, quantity?: number, variant?: string) => void;
   remove: (productId: string) => void;
   changeQty: (productId: string, delta: number) => void;
-  applyCoupon: (code: string) => { success: boolean; message: string };
+  applyCoupon: (code: string) => Promise<{ success: boolean; message: string }>;
   removeCoupon: () => void;
   clearCart: () => void;
   isOpen: boolean;
@@ -83,18 +83,39 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     return subtotal >= 999 ? 0 : 99;
   }, [subtotal, items.length]);
 
-  // Discount calculation based on valid coupons
-  const discount = useMemo(() => {
-    if (!appliedCoupon) return 0;
-    if (appliedCoupon === "OWLFIRST10") {
-      // 10% off up to ₹500
-      return Math.min(Math.round(subtotal * 0.1), 500);
+  // Discount calculation based on valid coupons (server-backed with demo fallback)
+  const [couponDiscount, setCouponDiscount] = useState(0);
+
+  // Auto-revalidate coupon whenever subtotal changes (e.g. item added/removed)
+  useEffect(() => {
+    if (!appliedCoupon || subtotal === 0) {
+      setCouponDiscount(0);
+      return;
     }
-    if (appliedCoupon === "SHINE200") {
-      return subtotal >= 1999 ? 200 : 0;
-    }
-    return 0;
+    let isCurrent = true;
+    fetch("/api/coupons/validate", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ code: appliedCoupon, subtotal })
+    })
+      .then(res => res.json())
+      .then(data => {
+        if (!isCurrent) return;
+        if (data.valid) {
+          setCouponDiscount(data.discount);
+          setCouponMessage({ text: data.message, isError: false });
+        } else {
+          setCouponDiscount(0);
+          setCouponMessage({ text: data.message || "Coupon is no longer valid for this subtotal.", isError: true });
+        }
+      })
+      .catch(() => {});
+    return () => {
+      isCurrent = false;
+    };
   }, [appliedCoupon, subtotal]);
+
+  const discount = couponDiscount;
 
   const total = useMemo(() => {
     return Math.max(0, subtotal - discount + shippingFee);
@@ -136,28 +157,39 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
     );
   };
 
-  const applyCoupon = (code: string) => {
+  const applyCoupon = async (code: string) => {
     const clean = code.trim().toUpperCase();
-    if (clean === "OWLFIRST10") {
-      setAppliedCoupon("OWLFIRST10");
-      setCouponMessage({ text: "Coupon OWLFIRST10 applied (10% Off)!", isError: false });
-      return { success: true, message: "10% off applied!" };
+    if (!clean) {
+      setCouponMessage({ text: "Please enter a coupon code.", isError: true });
+      return { success: false, message: "Code required" };
     }
-    if (clean === "SHINE200") {
-      if (subtotal < 1999) {
-        setCouponMessage({ text: "Code SHINE200 requires a minimum order of ₹1,999.", isError: true });
-        return { success: false, message: "Minimum order ₹1,999 required." };
+
+    try {
+      const res = await fetch("/api/coupons/validate", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ code: clean, subtotal })
+      });
+      const data = await res.json();
+
+      if (data.valid) {
+        setAppliedCoupon(data.code);
+        setCouponDiscount(data.discount);
+        setCouponMessage({ text: data.message, isError: false });
+        return { success: true, message: data.message };
+      } else {
+        setCouponMessage({ text: data.message || "Invalid coupon code.", isError: true });
+        return { success: false, message: data.message || "Invalid code" };
       }
-      setAppliedCoupon("SHINE200");
-      setCouponMessage({ text: "Coupon SHINE200 applied (₹200 Off)!", isError: false });
-      return { success: true, message: "₹200 off applied!" };
+    } catch {
+      setCouponMessage({ text: "Failed to validate coupon.", isError: true });
+      return { success: false, message: "Network error" };
     }
-    setCouponMessage({ text: "Invalid or expired coupon code.", isError: true });
-    return { success: false, message: "Invalid code" };
   };
 
   const removeCoupon = () => {
     setAppliedCoupon(null);
+    setCouponDiscount(0);
     setCouponMessage(null);
     setCouponInput("");
   };
@@ -165,6 +197,7 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
   const clearCart = () => {
     setItems([]);
     setAppliedCoupon(null);
+    setCouponDiscount(0);
   };
 
   // WhatsApp cart share link

@@ -3,10 +3,9 @@
 import React, { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Search, ShoppingBag, Heart, Menu, X, ArrowRight, Check } from "lucide-react";
+import { Search, ShoppingBag, Heart, Menu, X, ArrowRight, Check, User, Truck } from "lucide-react";
 import { useCart } from "./cart-provider";
 import { useWishlist } from "./wishlist-provider";
-import { OwlEmblem } from "./owl-emblem";
 
 export function Header() {
   const pathname = usePathname();
@@ -26,7 +25,7 @@ export function Header() {
     }
   };
 
-  const handleApplyHeaderCoupon = () => {
+  const handleCopyCoupon = () => {
     applyCoupon("OWLFIRST10");
     if (typeof navigator !== "undefined" && navigator.clipboard) {
       navigator.clipboard.writeText("OWLFIRST10").catch(() => {});
@@ -35,208 +34,228 @@ export function Header() {
     setTimeout(() => setCopiedCoupon(false), 2500);
   };
 
+  const navLinks = [
+    { label: "Fashion & Accessories", href: "/fashion" },
+    { label: "Crafts & Handmade", href: "/crafts-handmade" },
+    { label: "Lifestyle", href: "/lifestyle" },
+    { label: "Home Decor", href: "/home-decor" },
+    { label: "Pooja & Spiritual", href: "/pooja-spiritual" },
+    { label: "Gifts", href: "/gifts" },
+    { label: "New Arrivals", href: "/shop?filter=new" }
+  ];
+
   return (
     <>
-      {/* Top Announcement Bar with Actionable Verified Coupon */}
-      <div className="announcement" style={{ cursor: "pointer" }} onClick={handleApplyHeaderCoupon}>
-        <span>COMPLIMENTARY INSURED PAN-INDIA DELIVERY ON ORDERS ABOVE ₹999</span>
-        <span style={{ margin: "0 8px" }}>✦</span>
-        <span
-          style={{
-            textDecoration: "underline",
-            fontWeight: 700,
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "5px"
-          }}
-        >
-          {copiedCoupon ? (
-            <>
-              <Check size={12} /> APPLIED: OWLFIRST10 (10% OFF COPIED)
-            </>
-          ) : (
-            "USE CODE: OWLFIRST10 (CLICK TO APPLY 10% OFF)"
-          )}
-        </span>
+      {/* Top Announcement Bar */}
+      <div className="announcement-bar">
+        <div className="wrap announcement-inner">
+          <div className="announcement-text" onClick={handleCopyCoupon} role="button" tabIndex={0}>
+            <span>Complimentary Pan-India Insured Shipping on orders above ₹999</span>
+            <span className="announcement-separator">•</span>
+            <span className="announcement-promo">
+              {copiedCoupon ? (
+                <span className="coupon-copied">
+                  <Check size={12} /> OWLFIRST10 Applied (10% Off)
+                </span>
+              ) : (
+                <span>Use code <strong>OWLFIRST10</strong> for 10% off</span>
+              )}
+            </span>
+          </div>
+
+          <div className="announcement-help">
+            <Link href="/track-order">Track Order</Link>
+            <span className="announcement-separator">•</span>
+            <a href="https://wa.me/916305630468" target="_blank" rel="noopener noreferrer">
+              WhatsApp Concierge
+            </a>
+          </div>
+        </div>
       </div>
 
       {/* Main Header */}
       <header className="site-header">
-        <div className="nav wrap">
+        <div className="wrap nav-container">
           {/* Mobile menu trigger */}
           <button
-            className="icon-btn mobile-menu-toggle"
+            className="mobile-menu-btn"
             aria-label="Toggle navigation menu"
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
 
-          {/* OWLERA Logo with Approved Monoline Diamond Owl Emblem */}
-          <Link href="/" className="brand">
-            <div className="brand-emblem">
-              <OwlEmblem size={32} color="#AD8048" secondaryColor="#1E211E" />
-            </div>
-            <div>
-              <span>OWLERA</span>
-              <small>YOUR EVERYDAY SHINE</small>
-            </div>
+          {/* Official Brand Logo Asset */}
+          <Link href="/" className="brand-logo" aria-label="OWLERA Homepage">
+            <img
+              src="/logo-transparent.png"
+              alt="OWLERA — Your Everyday Shine"
+              className="brand-logo-img"
+              width={240}
+              height={36}
+            />
           </Link>
 
           {/* Desktop Navigation Links */}
-          <nav className={`nav-links ${mobileMenuOpen ? "open" : ""}`}>
-            <Link
-              href="/"
-              className={pathname === "/" ? "active" : ""}
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Home
-            </Link>
-            <Link
-              href="/shop"
-              className={pathname === "/shop" ? "active" : ""}
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Shop
-            </Link>
-            <Link
-              href="/jewellery"
-              className={pathname === "/jewellery" ? "active" : ""}
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Jewellery
-            </Link>
-            <Link
-              href="/fashion"
-              className={pathname === "/fashion" ? "active" : ""}
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Fashion
-            </Link>
-            <Link
-              href="/lifestyle"
-              className={pathname === "/lifestyle" ? "active" : ""}
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Lifestyle
-            </Link>
-            <Link
-              href="/about"
-              className={pathname === "/about" ? "active" : ""}
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              About Us
-            </Link>
-            <Link
-              href="/contact"
-              className={pathname === "/contact" ? "active" : ""}
-              onClick={() => setMobileMenuOpen(false)}
-            >
-              Contact
-            </Link>
-            <Link
-              href="/orders"
-              className={pathname.startsWith("/orders") ? "active" : ""}
-              onClick={() => setMobileMenuOpen(false)}
-              style={{ color: "var(--muted-gold)", fontWeight: 600 }}
-            >
-              Track Order
-            </Link>
+          <nav className="desktop-nav" aria-label="Primary navigation">
+            {navLinks.map(link => {
+              const isActive = pathname === link.href || (link.href !== "/" && pathname.startsWith(link.href));
+              return (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className={`nav-item ${isActive ? "active" : ""}`}
+                >
+                  {link.label}
+                </Link>
+              );
+            })}
           </nav>
 
-          {/* Action Icons */}
-          <div className="nav-actions">
-            {/* Search Trigger */}
+          {/* Actions: Search, Account, Wishlist, Cart */}
+          <div className="header-actions">
+            {/* Search Toggle */}
             <button
-              className="icon-btn"
+              className="action-btn"
               aria-label="Search catalogue"
               onClick={() => setSearchOpen(!searchOpen)}
             >
-              <Search />
+              <Search size={19} />
             </button>
 
-            {/* Wishlist Link */}
-            <Link href="/wishlist" className="icon-btn" aria-label="View Wishlist">
-              <Heart />
-              {wishlistCount > 0 && <span className="badge-count">{wishlistCount}</span>}
+            {/* Account */}
+            <Link href="/account" className="action-btn" aria-label="Customer Account">
+              <User size={19} />
             </Link>
 
-            {/* Shopping Bag Trigger */}
+            {/* Wishlist */}
+            <Link href="/wishlist" className="action-btn" aria-label="View Wishlist">
+              <Heart size={19} />
+              {wishlistCount > 0 && <span className="action-badge">{wishlistCount}</span>}
+            </Link>
+
+            {/* Shopping Bag */}
             <button
-              className="icon-btn cart-trigger"
+              className="action-btn cart-btn"
               aria-label="Open Shopping Bag"
               onClick={() => setCartOpen(true)}
             >
-              <ShoppingBag />
-              {cartCount > 0 && <span className="badge-count">{cartCount}</span>}
+              <ShoppingBag size={19} />
+              {cartCount > 0 && <span className="action-badge">{cartCount}</span>}
             </button>
           </div>
         </div>
 
         {/* Expandable Search Drawer */}
         {searchOpen && (
-          <div
-            style={{
-              borderTop: "1px solid var(--border-color)",
-              background: "#FFFFFF",
-              padding: "16px 0"
-            }}
-          >
+          <div className="search-dropdown">
             <div className="wrap">
-              <form
-                onSubmit={handleSearchSubmit}
-                style={{
-                  display: "flex",
-                  alignItems: "center",
-                  gap: "12px",
-                  maxWidth: "600px",
-                  margin: "0 auto"
-                }}
-              >
-                <div style={{ position: "relative", flex: 1 }}>
-                  <Search
-                    size={18}
-                    style={{
-                      position: "absolute",
-                      left: "14px",
-                      top: "50%",
-                      transform: "translateY(-50%)",
-                      color: "var(--secondary-text)"
-                    }}
-                  />
-                  <input
-                    type="search"
-                    placeholder="Search gold hoops, necklaces, silk scarves, candles…"
-                    value={searchQuery}
-                    onChange={e => setSearchQuery(e.target.value)}
-                    autoFocus
-                    style={{
-                      width: "100%",
-                      padding: "12px 14px 12px 42px",
-                      border: "1px solid var(--border-color)",
-                      borderRadius: "var(--radius-sm)",
-                      fontSize: "13px",
-                      background: "var(--warm-cream)",
-                      outlineColor: "var(--forest-green)"
-                    }}
-                  />
-                </div>
-                <button type="submit" className="btn btn-primary" style={{ padding: "12px 20px" }}>
-                  Search <ArrowRight size={14} />
+              <form onSubmit={handleSearchSubmit} className="search-form">
+                <Search size={18} className="search-icon" />
+                <input
+                  type="text"
+                  placeholder="Search across all categories (e.g. gold hoops, brass urli, silk scarf, candles)…"
+                  value={searchQuery}
+                  onChange={e => setSearchQuery(e.target.value)}
+                  autoFocus
+                  className="search-input"
+                />
+                <button type="submit" className="search-submit">
+                  Search
                 </button>
                 <button
                   type="button"
-                  className="icon-btn"
                   onClick={() => setSearchOpen(false)}
+                  className="search-close"
                   aria-label="Close search"
                 >
-                  <X size={20} />
+                  <X size={18} />
                 </button>
               </form>
             </div>
           </div>
         )}
       </header>
+
+      {/* Mobile Drawer Navigation */}
+      {mobileMenuOpen && (
+        <div className="mobile-drawer-overlay" onClick={() => setMobileMenuOpen(false)}>
+          <div className="mobile-drawer" onClick={e => e.stopPropagation()}>
+            <div className="mobile-drawer-header">
+              <Link href="/" className="brand-logo" onClick={() => setMobileMenuOpen(false)} aria-label="OWLERA Homepage">
+                <img
+                  src="/logo-transparent.png"
+                  alt="OWLERA"
+                  className="brand-logo-img"
+                  style={{ height: "30px", width: "auto" }}
+                />
+              </Link>
+              <button
+                className="drawer-close-btn"
+                onClick={() => setMobileMenuOpen(false)}
+                aria-label="Close menu"
+              >
+                <X size={20} />
+              </button>
+            </div>
+
+            {/* Mobile Search */}
+            <form onSubmit={handleSearchSubmit} className="mobile-search-form">
+              <input
+                type="text"
+                placeholder="Search products & categories…"
+                value={searchQuery}
+                onChange={e => setSearchQuery(e.target.value)}
+              />
+              <button type="submit">
+                <Search size={16} />
+              </button>
+            </form>
+
+            <nav className="mobile-nav-list">
+              <div className="mobile-nav-section-title">Departments</div>
+              {navLinks.map(link => (
+                <Link
+                  key={link.href}
+                  href={link.href}
+                  className="mobile-nav-item"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  <span>{link.label}</span>
+                  <ArrowRight size={14} />
+                </Link>
+              ))}
+
+              <div className="mobile-nav-section-title" style={{ marginTop: "16px" }}>Services & Care</div>
+              <Link href="/track-order" className="mobile-nav-item" onClick={() => setMobileMenuOpen(false)}>
+                <span>Track Order</span>
+                <Truck size={14} />
+              </Link>
+              <Link href="/account" className="mobile-nav-item" onClick={() => setMobileMenuOpen(false)}>
+                <span>My Account</span>
+                <User size={14} />
+              </Link>
+              <Link href="/about" className="mobile-nav-item" onClick={() => setMobileMenuOpen(false)}>
+                <span>Our Heritage</span>
+              </Link>
+              <Link href="/contact" className="mobile-nav-item" onClick={() => setMobileMenuOpen(false)}>
+                <span>Contact Concierge</span>
+              </Link>
+            </nav>
+
+            <div className="mobile-drawer-footer">
+              <a
+                href="https://wa.me/916305630468"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="mobile-concierge-link"
+              >
+                WhatsApp Concierge: +91 63056 30468
+              </a>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   );
 }

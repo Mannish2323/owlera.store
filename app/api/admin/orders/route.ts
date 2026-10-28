@@ -1,10 +1,21 @@
 import { NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase-server";
+import { verifyAdmin, createServiceClient } from "@/lib/admin-auth";
 
-export async function GET() {
+export async function GET(req: Request) {
+  const auth = await verifyAdmin();
+  if (!auth.authorized) {
+    return NextResponse.json({ error: auth.error }, { status: auth.status });
+  }
+
+  const { searchParams } = new URL(req.url);
+  const statusFilter = searchParams.get("status");
+  const searchQuery = searchParams.get("q")?.toLowerCase().trim();
+
   const supabase = createClient();
   if (supabase) {
-    const { data: orders, error } = await supabase
+    let query = supabase
       .from("orders")
       .select(`
         *,
@@ -13,139 +24,196 @@ export async function GET() {
       `)
       .order("created_at", { ascending: false });
 
+    if (statusFilter && statusFilter !== "all") {
+      query = query.eq("order_status", statusFilter);
+    }
+
+    const { data: orders, error } = await query;
+
     if (!error && orders) {
-      return NextResponse.json({ orders, source: "supabase" });
+      let filtered = orders;
+      if (searchQuery) {
+        filtered = filtered.filter(
+          o =>
+            o.order_number?.toLowerCase().includes(searchQuery) ||
+            o.customer_name?.toLowerCase().includes(searchQuery) ||
+            o.customer_email?.toLowerCase().includes(searchQuery) ||
+            o.customer_phone?.includes(searchQuery)
+        );
+      }
+      return NextResponse.json({ orders: filtered, total: filtered.length, source: "supabase" });
     }
   }
 
-  // Demo fallback orders
-  const sampleOrders = [
-    {
-      id: "ord-1",
-      order_number: "OWL-9A4B8C1D",
-      customer_name: "Ananya Sharma",
-      customer_email: "ananya@example.com",
-      customer_phone: "9876543210",
-      shipping_address: {
-        address: "Flat 402, Royal Palms, Banjara Hills",
-        city: "Hyderabad",
-        state: "Telangana",
-        pincode: "500034"
-      },
-      subtotal: 3398,
-      shipping_fee: 0,
-      discount: 340,
-      total: 3058,
-      currency: "INR",
-      payment_status: "paid",
-      order_status: "shipped",
-      created_at: new Date(Date.now() - 86400000 * 2).toISOString(),
-      order_items: [
-        { product_name: "Celeste Gold Hoops", quantity: 1, unit_price: 1499, line_total: 1499 },
-        { product_name: "Luna Pendant Necklace", quantity: 1, unit_price: 1899, line_total: 1899 }
-      ],
-      shipping_fulfilment: [
-        {
-          courier_name: "BlueDart Express",
-          tracking_number: "BD-904829103",
-          tracking_url: "https://www.bluedart.com",
-          dispatched_at: new Date(Date.now() - 86400000).toISOString(),
-          notes: "Dispatched via air express"
-        }
-      ]
-    },
-    {
-      id: "ord-2",
-      order_number: "OWL-2F5E7B9A",
-      customer_name: "Rohan Mehta",
-      customer_email: "rohan@example.com",
-      customer_phone: "9123456780",
-      shipping_address: {
-        address: "12, Indiranagar 100ft Road",
-        city: "Bengaluru",
-        state: "Karnataka",
-        pincode: "560038"
-      },
-      subtotal: 4999,
-      shipping_fee: 0,
-      discount: 200,
-      total: 4799,
-      currency: "INR",
-      payment_status: "paid",
-      order_status: "packed",
-      created_at: new Date(Date.now() - 86400000).toISOString(),
-      order_items: [
-        { product_name: "Signature OWLERA Luxe Gift Suite", quantity: 1, unit_price: 4999, line_total: 4999 }
-      ],
-      shipping_fulfilment: [
-        {
-          courier_name: "Delhivery Surface",
-          tracking_number: "DLH-77492019",
-          tracking_url: "https://www.delhivery.com",
-          dispatched_at: null,
-          notes: "Handcrafted gift ribbon packaging completed"
-        }
-      ]
-    }
-  ];
-
-  return NextResponse.json({ orders: sampleOrders, source: "demo" });
+  return NextResponse.json({ orders: [], total: 0, source: "none", message: "Database not configured." });
 }
 
 export async function PUT(req: Request) {
+  const auth = await verifyAdmin();
+  if (!auth.authorized) {
+    return NextResponse.json({ error: auth.error }, { status: auth.status });
+  }
+
   try {
     const body = await req.json();
-    const { orderId, orderStatus, courierName, trackingNumber, trackingUrl, notes } = body;
+    const { orderId, orderStatus, courierName, trackingNumber, trackingUrl, notes, paymentStatus } = body;
 
     if (!orderId) {
       return NextResponse.json({ error: "Order ID is required." }, { status: 400 });
     }
 
-    const supabase = createClient();
-    if (supabase) {
-      // 1. Update order status
-      if (orderStatus) {
-        await supabase
-          .from("orders")
-          .update({
-            order_status: orderStatus,
-            updated_at: new Date().toISOString()
-          })
-          .eq("id", orderId);
-      }
+    // Explicit valid transitions
+    const validOrderStatuses = [
+      "pending",
+      "confirmed",
+      "processing",
+      "packed",
+      "dispatched",
+      "shipped",
+      "delivered",
+      "cancelled",
+      "returned"
+    ];
 
-      // 2. Update shipping fulfilment
-      const { data: existingFulfilment } = await supabase
-        .from("shipping_fulfilment")
-        .select("id")
-        .eq("order_id", orderId)
-        .single();
-
-      const shippingPayload = {
-        courier_name: courierName || "",
-        tracking_number: trackingNumber || "",
-        tracking_url: trackingUrl || "",
-        notes: notes || "",
-        dispatched_at: orderStatus === "shipped" || orderStatus === "dispatched" ? new Date().toISOString() : undefined,
-        updated_at: new Date().toISOString()
-      };
-
-      if (existingFulfilment) {
-        await supabase
-          .from("shipping_fulfilment")
-          .update(shippingPayload)
-          .eq("order_id", orderId);
-      } else {
-        await supabase
-          .from("shipping_fulfilment")
-          .insert({ order_id: orderId, ...shippingPayload });
-      }
-
-      return NextResponse.json({ success: true, message: "Order & shipping updated in database." });
+    if (orderStatus && !validOrderStatuses.includes(orderStatus)) {
+      return NextResponse.json({ error: `Invalid order status: ${orderStatus}` }, { status: 400 });
     }
 
-    return NextResponse.json({ success: true, message: "Updated in demo mode." });
+    const supabase = createClient();
+    const serviceClient = createServiceClient() || supabase;
+
+    if (!serviceClient) {
+      return NextResponse.json({ error: "Database not configured." }, { status: 503 });
+    }
+
+    // 1. Fetch current order
+    const { data: existingOrder, error: fetchErr } = await serviceClient
+      .from("orders")
+      .select("*, order_items(*)")
+      .eq("id", orderId)
+      .single();
+
+    if (fetchErr || !existingOrder) {
+      return NextResponse.json({ error: "Order not found." }, { status: 404 });
+    }
+
+    // Security check: An admin cannot arbitrarily fabricate a 'paid' payment status on an order without verified provider records
+    if (paymentStatus && paymentStatus === "paid" && existingOrder.payment_status !== "paid") {
+      // Check if there is a verified record in payments table
+      const { data: verifiedPayment } = await serviceClient
+        .from("payments")
+        .select("id, verification_status")
+        .eq("order_id", orderId)
+        .eq("verification_status", "verified")
+        .limit(1);
+
+      if (!verifiedPayment || verifiedPayment.length === 0) {
+        return NextResponse.json(
+          {
+            error: "Cannot mark order as paid without verified payment provider credentials or webhook reconciliation record."
+          },
+          { status: 403 }
+        );
+      }
+    }
+
+    // Handle restocking if order is cancelled from a confirmed/processing state
+    if (orderStatus === "cancelled" && existingOrder.order_status !== "cancelled") {
+      if (existingOrder.order_items && Array.isArray(existingOrder.order_items)) {
+        for (const item of existingOrder.order_items) {
+          if (item.product_id && item.quantity > 0) {
+            // Fetch current stock
+            const { data: p } = await serviceClient
+              .from("products")
+              .select("stock")
+              .eq("id", item.product_id)
+              .single();
+
+            if (p) {
+              const restoredStock = (p.stock || 0) + item.quantity;
+              await serviceClient.from("products").update({ stock: restoredStock }).eq("id", item.product_id);
+
+              // Log audit trail
+              await serviceClient.from("audit_logs").insert({
+                actor_id: auth.userId,
+                actor_email: auth.email,
+                action: "inventory_adjustment",
+                resource_type: "product",
+                resource_id: item.product_id,
+                changes: {
+                  reason: "Cancellation Restock",
+                  order_number: existingOrder.order_number,
+                  restored_quantity: item.quantity,
+                  new_stock: restoredStock
+                }
+              });
+            }
+          }
+        }
+      }
+    }
+
+    // 2. Update order
+    const orderUpdates: Record<string, any> = {
+      updated_at: new Date().toISOString()
+    };
+    if (orderStatus) orderUpdates.order_status = orderStatus;
+    if (notes !== undefined) orderUpdates.internal_notes = notes;
+
+    const { error: orderErr } = await serviceClient
+      .from("orders")
+      .update(orderUpdates)
+      .eq("id", orderId);
+
+    if (orderErr) {
+      return NextResponse.json({ error: orderErr.message }, { status: 400 });
+    }
+
+    // 3. Update shipping fulfilment
+    const { data: existingFulfilment } = await serviceClient
+      .from("shipping_fulfilment")
+      .select("id")
+      .eq("order_id", orderId)
+      .single();
+
+    const shippingPayload: Record<string, any> = {
+      courier_name: courierName || "BlueDart Express",
+      tracking_number: trackingNumber || "",
+      tracking_url: trackingUrl || (trackingNumber ? `https://www.bluedart.com/tracking?track=${trackingNumber}` : ""),
+      notes: notes || "",
+      updated_at: new Date().toISOString()
+    };
+
+    if (orderStatus === "shipped" || orderStatus === "dispatched") {
+      shippingPayload.dispatched_at = new Date().toISOString();
+    }
+    if (orderStatus === "delivered") {
+      shippingPayload.delivered_at = new Date().toISOString();
+    }
+
+    if (existingFulfilment) {
+      await serviceClient
+        .from("shipping_fulfilment")
+        .update(shippingPayload)
+        .eq("order_id", orderId);
+    } else {
+      await serviceClient
+        .from("shipping_fulfilment")
+        .insert({ order_id: orderId, ...shippingPayload });
+    }
+
+    // Revalidate tracking pages
+    try {
+      revalidatePath("/orders");
+      revalidatePath("/track-order");
+      revalidatePath("/account");
+    } catch {}
+
+    return NextResponse.json({
+      success: true,
+      message: `Order #${existingOrder.order_number} status updated to ${orderStatus || existingOrder.order_status}.`
+    });
   } catch (err: any) {
-    return NextResponse.json({ error: err.message }, { status: 500 });
+    return NextResponse.json({ error: err.message || "Failed to update order" }, { status: 500 });
   }
 }

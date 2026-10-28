@@ -2,7 +2,7 @@ import { MetadataRoute } from "next";
 import { demoProducts, demoCollections } from "@/lib/products";
 
 export default function sitemap(): MetadataRoute.Sitemap {
-  const baseUrl = "https://owlera.in";
+  const baseUrl = process.env.NEXT_PUBLIC_SITE_URL || "https://owlerastore.vercel.app";
 
   const staticPages = [
     "",
@@ -10,6 +10,9 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/jewellery",
     "/fashion",
     "/lifestyle",
+    "/home-decor",
+    "/pooja-spiritual",
+    "/gifts",
     "/search",
     "/about",
     "/contact",
@@ -18,6 +21,10 @@ export default function sitemap(): MetadataRoute.Sitemap {
     "/track-order",
     "/wishlist",
     "/cart",
+    "/checkout",
+    "/account",
+    "/auth/login",
+    "/auth/register",
     "/policies",
     "/policies/shipping",
     "/policies/returns",
@@ -30,7 +37,7 @@ export default function sitemap(): MetadataRoute.Sitemap {
     url: `${baseUrl}${route}`,
     lastModified: new Date(),
     changeFrequency: "weekly" as const,
-    priority: route === "" ? 1.0 : 0.8
+    priority: route === "" ? 1.0 : route.startsWith("/policies") ? 0.5 : 0.8
   }));
 
   const productPages = demoProducts.map(product => ({

@@ -46,9 +46,15 @@ function ShopContent() {
       .filter(p => {
         // Category filter
         if (selectedCategory !== "all") {
+          const catLower = p.category.toLowerCase();
+          const slugLower = (p.categorySlug || "").toLowerCase();
           const matchCat =
-            p.category.toLowerCase() === selectedCategory ||
-            (p.categorySlug && p.categorySlug.toLowerCase() === selectedCategory);
+            catLower === selectedCategory ||
+            slugLower === selectedCategory ||
+            (selectedCategory === "home-decor" && catLower === "home decor") ||
+            (selectedCategory === "pooja-spiritual" && (catLower === "pooja & spiritual" || catLower.includes("pooja"))) ||
+            (selectedCategory === "gifts" && (catLower === "gifting" || slugLower === "gifting")) ||
+            (selectedCategory === "gifting" && (catLower === "gifts" || slugLower === "gifts"));
           if (!matchCat) return false;
         }
 
@@ -169,9 +175,11 @@ function ShopContent() {
                 {[
                   { id: "all", label: "All Categories" },
                   { id: "jewellery", label: "Jewellery" },
-                  { id: "fashion", label: "Fashion & Bags" },
-                  { id: "lifestyle", label: "Lifestyle & Decor" },
-                  { id: "gifting", label: "Gift Suites" }
+                  { id: "fashion", label: "Fashion & Accessories" },
+                  { id: "lifestyle", label: "Lifestyle & Sanctuary" },
+                  { id: "home-decor", label: "Home Decor" },
+                  { id: "pooja-spiritual", label: "Pooja & Spiritual" },
+                  { id: "gifts", label: "Curated Gift Suites" }
                 ].map(cat => (
                   <label key={cat.id} className="filter-label">
                     <input

@@ -3,7 +3,6 @@
 import React from "react";
 import Link from "next/link";
 import { MessageCircle, Mail, MapPin, ShieldCheck, Truck, RefreshCw } from "lucide-react";
-import { OwlEmblem } from "./owl-emblem";
 
 export function Footer() {
   return (
@@ -12,14 +11,15 @@ export function Footer() {
         <div className="footer-grid">
           {/* Brand Col */}
           <div className="footer-about">
-            <Link href="/" className="brand" style={{ fontSize: "22px" }}>
-              <div className="brand-emblem" style={{ width: "32px", height: "32px" }}>
-                <OwlEmblem size={28} color="#AD8048" secondaryColor="#1E211E" />
-              </div>
-              <div>
-                <span>OWLERA</span>
-                <small>YOUR EVERYDAY SHINE</small>
-              </div>
+            <Link href="/" aria-label="OWLERA Homepage" style={{ display: "inline-block", marginBottom: "14px" }}>
+              <img
+                src="/logo-transparent.png"
+                alt="OWLERA — Your Everyday Shine"
+                className="footer-brand-logo-img"
+                width={260}
+                height={39}
+                style={{ height: "38px", width: "auto", display: "block" }}
+              />
             </Link>
             <p>
               Curated everyday jewellery, fashion accessories and thoughtful lifestyle finds crafted to bring quiet luxury and enduring elegance to your routine.
@@ -49,14 +49,16 @@ export function Footer() {
 
           {/* Shop Col */}
           <div className="footer-col">
-            <h4>Collections</h4>
+            <h4>Departments</h4>
             <ul>
-              <li><Link href="/shop?category=jewellery">Jewellery Edit</Link></li>
-              <li><Link href="/shop?category=fashion">Fashion Accessories</Link></li>
-              <li><Link href="/shop?category=lifestyle">Lifestyle & Home</Link></li>
-              <li><Link href="/shop?category=gifting">Luxury Gift Suites</Link></li>
-              <li><Link href="/shop">View All Products</Link></li>
-              <li><Link href="/orders">Track Your Order</Link></li>
+              <li><Link href="/fashion">Fashion & Accessories</Link></li>
+              <li><Link href="/crafts-handmade">Crafts & Handmade</Link></li>
+              <li><Link href="/lifestyle">Lifestyle</Link></li>
+              <li><Link href="/home-decor">Home Decor</Link></li>
+              <li><Link href="/pooja-spiritual">Pooja & Spiritual</Link></li>
+              <li><Link href="/gifts">Gifts & Suites</Link></li>
+              <li><Link href="/shop">All Catalogue</Link></li>
+              <li><Link href="/track-order">Track Your Order</Link></li>
             </ul>
           </div>
 

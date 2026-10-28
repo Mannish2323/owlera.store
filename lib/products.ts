@@ -37,36 +37,52 @@ export type Product = {
 
 export const demoCategories: Category[] = [
   {
-    id: "cat-1",
-    name: "Jewellery",
-    slug: "jewellery",
-    description: "Everyday gold-tone hoops, pendant necklaces, and delicate bracelets.",
-    image: "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=900&q=85",
+    id: "cat-fashion",
+    name: "Fashion & Accessories",
+    slug: "fashion",
+    description: "Structured evening clutches, pure silk twill scarves, and refined personal accents.",
+    image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=900&q=85",
+    count: 3
+  },
+  {
+    id: "cat-crafts",
+    name: "Crafts & Handmade",
+    slug: "crafts-handmade",
+    description: "Artisanal slow-made creations, delicate filigree metalwork, and handcrafted heritage pieces.",
+    image: "https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=900&q=85",
     count: 4
   },
   {
-    id: "cat-2",
-    name: "Fashion",
-    slug: "fashion",
-    description: "Structured evening bags, luxury silk accessories, and modern essentials.",
-    image: "https://images.unsplash.com/photo-1584917865442-de89df76afd3?auto=format&fit=crop&w=900&q=85",
-    count: 2
-  },
-  {
-    id: "cat-3",
+    id: "cat-lifestyle",
     name: "Lifestyle",
     slug: "lifestyle",
-    description: "Botanical soy candles, brass keepsakes, and mindful sanctuary pieces.",
+    description: "Hand-poured amber botanical candles, brass sanctuary keepsakes, and daily rituals.",
     image: "https://images.unsplash.com/photo-1603006905003-be475563bc59?auto=format&fit=crop&w=900&q=85",
-    count: 2
+    count: 3
   },
   {
-    id: "cat-4",
-    name: "Gifting",
-    slug: "gifting",
-    description: "Curated gift suites presented in OWLERA forest green and gold gift boxes.",
-    image: "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=900&q=85",
+    id: "cat-decor",
+    name: "Home Decor",
+    slug: "home-decor",
+    description: "Sand-cast brass vessels, fluted vases, and heirloom Indian living room accents.",
+    image: "https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?auto=format&fit=crop&w=900&q=85",
     count: 3
+  },
+  {
+    id: "cat-pooja",
+    name: "Pooja & Spiritual",
+    slug: "pooja-spiritual",
+    description: "Sacred kamal brass diyas, handcrafted puja thalis, and auspicious sanctuary essentials.",
+    image: "https://images.unsplash.com/photo-1606293926075-69a00dbfde81?auto=format&fit=crop&w=1000&q=85",
+    count: 3
+  },
+  {
+    id: "cat-gifts",
+    name: "Gifts",
+    slug: "gifts",
+    description: "Thoughtfully curated gift boxes, festive suites, and personalized celebration sets.",
+    image: "https://images.unsplash.com/photo-1513519245088-0e12902e5a38?auto=format&fit=crop&w=900&q=85",
+    count: 4
   }
 ];
 
@@ -309,6 +325,108 @@ export const demoProducts: Product[] = [
     badge: "Luxury Gift",
     featured: true,
     isNew: true
+  },
+  {
+    id: "owl-9",
+    name: "Nandi Handcrafted Brass Urli Bowl",
+    slug: "nandi-brass-urli-bowl",
+    category: "Home Decor",
+    categorySlug: "home-decor",
+    price: 2899,
+    compareAt: 3600,
+    description: "Sand-cast by traditional metal artisans in pure heavy brass. The Nandi Urli features delicate scalloped rims engineered for floating water blooms, fresh marigolds, and tealights. Creates an authentic aura of serene luxury at your entryway or living space.",
+    specifications: {
+      "Material": "100% Solid Virgin Brass",
+      "Diameter": "26cm / 10.2 inches",
+      "Finish": "Antique Lustre Wax Sealed",
+      "Weight": "1.4 kg",
+      "Care": "Clean with dry cotton cloth. Periodically polish with brass cleaner or pitambari."
+    },
+    image: "https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?auto=format&fit=crop&w=1000&q=85",
+    gallery: [
+      "https://images.unsplash.com/photo-1583847268964-b28dc8f51f92?auto=format&fit=crop&w=1000&q=85"
+    ],
+    stock: 10,
+    sku: "OWL-HD-001",
+    badge: "Artisan Heirloom",
+    featured: true,
+    isNew: true
+  },
+  {
+    id: "owl-10",
+    name: "Kamal Lotus Pure Brass Diya Pair",
+    slug: "kamal-lotus-brass-diya-pair",
+    category: "Pooja & Spiritual",
+    categorySlug: "pooja-spiritual",
+    price: 1699,
+    compareAt: 2199,
+    description: "A pair of sculpted lotus-petal brass lamps crafted for prayer sanctums and sacred festivities. Each petal is contoured to cup pure ghee or organic sesame oil, casting warm radiant shadows that elevate morning and evening aartis.",
+    specifications: {
+      "Material": "Solid Heavyweight Brass",
+      "Set Includes": "2 Matching Lotus Diyas",
+      "Dimensions": "9cm diameter x 6cm height each",
+      "Weight": "520g total",
+      "Packaging": "Presented in OWLERA festive rigid box"
+    },
+    image: "https://images.unsplash.com/photo-1606293926075-69a00dbfde81?auto=format&fit=crop&w=1000&q=85",
+    gallery: [
+      "https://images.unsplash.com/photo-1606293926075-69a00dbfde81?auto=format&fit=crop&w=1000&q=85"
+    ],
+    stock: 20,
+    sku: "OWL-PJ-001",
+    badge: "Sacred Edition",
+    featured: true,
+    isNew: true
+  },
+  {
+    id: "owl-11",
+    name: "Vedic Mysore Sandalwood Incense & Bell Suite",
+    slug: "vedic-sandalwood-incense-suite",
+    category: "Pooja & Spiritual",
+    categorySlug: "pooja-spiritual",
+    price: 1399,
+    compareAt: 1799,
+    description: "An authentic ritual set comprising pure Mysore sandalwood hand-rolled incense sticks, a solid brass ghanti (handbell) with Garuda finial, and an engraved brass ash catcher. Invokes tranquility and sacred mindfulness.",
+    specifications: {
+      "Incense": "40 Luxury Hand-Rolled Sticks (Sandalwood & Frankincense)",
+      "Bell": "Cast Brass with clear resonance tone",
+      "Burn Time": "45 minutes per stick",
+      "Origin": "Mysuru, Karnataka"
+    },
+    image: "https://images.unsplash.com/photo-1545205597-3d9d02c29597?auto=format&fit=crop&w=1000&q=85",
+    gallery: [
+      "https://images.unsplash.com/photo-1545205597-3d9d02c29597?auto=format&fit=crop&w=1000&q=85"
+    ],
+    stock: 15,
+    sku: "OWL-PJ-002",
+    badge: "Mindful Ritual",
+    featured: false,
+    isNew: true
+  },
+  {
+    id: "owl-12",
+    name: "Jaipur Fluted Ceramic Vase in Warm Ivory",
+    slug: "jaipur-fluted-ceramic-vase",
+    category: "Home Decor",
+    categorySlug: "home-decor",
+    price: 2199,
+    compareAt: 2800,
+    description: "Wheel-thrown earthenware finished in a tactile matte warm ivory glaze with soft fluted ribbing. Designed to host fresh eucalyptus sprigs, dried lotus pods, or stand majestically as a sculptural centerpiece.",
+    specifications: {
+      "Material": "Studio Ceramic Stoneware",
+      "Dimensions": "22cm height x 14cm width",
+      "Glaze": "Matte Warm Ivory (Waterproof interior)",
+      "Weight": "980g"
+    },
+    image: "https://images.unsplash.com/photo-1612196808214-b8e1d6145a8c?auto=format&fit=crop&w=1000&q=85",
+    gallery: [
+      "https://images.unsplash.com/photo-1612196808214-b8e1d6145a8c?auto=format&fit=crop&w=1000&q=85"
+    ],
+    stock: 8,
+    sku: "OWL-HD-002",
+    badge: "Sculptural",
+    featured: false,
+    isNew: true
   }
 ];
 
@@ -372,7 +490,43 @@ export async function getProducts(): Promise<Product[]> {
   }
 }
 
+export async function getCategories(): Promise<Category[]> {
+  const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
+  const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+
+  if (!url || !key) {
+    return demoCategories;
+  }
+
+  try {
+    const { createClient } = await import("@supabase/supabase-js");
+    const supabase = createClient(url, key);
+
+    const { data, error } = await supabase
+      .from("categories")
+      .select("*")
+      .eq("is_active", true)
+      .order("display_order", { ascending: true });
+
+    if (error || !data || data.length === 0) {
+      return demoCategories;
+    }
+
+    return data.map((item: any) => ({
+      id: item.id,
+      name: item.name,
+      slug: item.slug,
+      description: item.description || "",
+      image: item.image_url || "https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?auto=format&fit=crop&w=900&q=85",
+      count: 3
+    }));
+  } catch (e) {
+    return demoCategories;
+  }
+}
+
 export async function getProductBySlug(slug: string): Promise<Product | null> {
   const products = await getProducts();
   return products.find(p => p.slug === slug) || null;
 }
+
