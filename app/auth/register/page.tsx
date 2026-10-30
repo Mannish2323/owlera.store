@@ -7,11 +7,13 @@ import { ArrowRight, Lock, Mail, User, Phone, CheckCircle } from "lucide-react";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { createClient } from "@/lib/supabase-browser";
+import { useAuth } from "@/components/auth-provider";
 
 function RegisterForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const next = searchParams.get("next") || "/account";
+  const { register } = useAuth();
 
   const [fullName, setFullName] = useState("");
   const [email, setEmail] = useState("");
@@ -28,8 +30,8 @@ function RegisterForm() {
       return;
     }
 
-    if (password.length < 8) {
-      setErrorMsg("Password must be at least 8 characters long.");
+    if (password.length < 6) {
+      setErrorMsg("Password must be at least 6 characters long.");
       return;
     }
 
@@ -42,36 +44,15 @@ function RegisterForm() {
     setErrorMsg("");
 
     try {
-      const supabase = createClient();
-      if (!supabase) {
-        setErrorMsg("Authentication service is currently offline. Please try again shortly.");
-        setLoading(false);
-        return;
-      }
+      const res = await register(fullName.trim(), email.trim(), phone.trim(), password);
 
-      const { data, error } = await supabase.auth.signUp({
-        email,
-        password,
-        options: {
-          data: {
-            full_name: fullName.trim(),
-            phone: phone.trim()
-          }
-        }
-      });
-
-      if (error) {
-        setErrorMsg(error.message || "Failed to create account.");
-      } else if (data.user) {
-        // If email confirmation is required:
-        if (data.session) {
-          router.push(next);
-          router.refresh();
-        } else {
-          setSuccessMsg(
-            "Account created! Please check your email to verify your address before signing in."
-          );
-        }
+      if (!res.success) {
+        setErrorMsg(res.error || "Failed to create account.");
+      } else if (res.message) {
+        setSuccessMsg(res.message);
+      } else {
+        router.push(next);
+        router.refresh();
       }
     } catch (err: any) {
       setErrorMsg(err.message || "An unexpected error occurred.");

@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import { AuthProvider } from "@/components/auth-provider";
 import { CartProvider } from "@/components/cart-provider";
 import { WishlistProvider } from "@/components/wishlist-provider";
 import { WhatsAppFloat } from "@/components/whatsapp-float";
@@ -79,13 +80,15 @@ export default function RootLayout({
         />
       </head>
       <body>
-        <CartProvider>
+        <AuthProvider>
+          <CartProvider>
           <WishlistProvider>
             {children}
             <WhatsAppFloat />
             <BottomNav />
           </WishlistProvider>
         </CartProvider>
+        </AuthProvider>
       </body>
     </html>
   );

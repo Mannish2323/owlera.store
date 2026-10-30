@@ -10,8 +10,8 @@ export function BottomNav() {
   const pathname = usePathname();
   const { count: wishlistCount } = useWishlist();
 
-  // Admin routes should not display the customer bottom navigation
-  if (pathname.startsWith("/admin")) {
+  // Hide bottom nav on admin routes, product detail pages (where sticky Add to Cart bar resides), and checkout
+  if (pathname.startsWith("/admin") || pathname.startsWith("/products/") || pathname.startsWith("/checkout")) {
     return null;
   }
 

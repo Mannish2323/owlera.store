@@ -7,12 +7,14 @@ import { ArrowRight, Lock, Mail } from "lucide-react";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { createClient } from "@/lib/supabase-browser";
+import { useAuth } from "@/components/auth-provider";
 
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const next = searchParams.get("next") || "/account";
   const urlError = searchParams.get("error");
+  const { login } = useAuth();
 
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -30,21 +32,10 @@ function LoginForm() {
     setErrorMsg("");
 
     try {
-      const supabase = createClient();
-      if (!supabase) {
-        setErrorMsg("Authentication service is currently offline. Please try again shortly.");
-        setLoading(false);
-        return;
-      }
-
-      const { data, error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      });
-
-      if (error) {
-        setErrorMsg(error.message || "Invalid email or password.");
-      } else if (data.user) {
+      const res = await login(email, password);
+      if (!res.success) {
+        setErrorMsg(res.error || "Invalid email or password.");
+      } else {
         router.push(next);
         router.refresh();
       }

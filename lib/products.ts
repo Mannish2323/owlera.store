@@ -847,7 +847,7 @@ export async function getProducts(): Promise<Product[]> {
       return demoProducts;
     }
 
-    return data.map((item: any) => ({
+    const mapped = data.map((item: any) => ({
       id: item.id,
       name: item.name,
       slug: item.slug,
@@ -865,6 +865,15 @@ export async function getProducts(): Promise<Product[]> {
       featured: item.is_featured ?? false,
       isNew: item.is_new ?? false
     }));
+
+    const existingSlugs = new Set(mapped.map((p: any) => p.slug.toLowerCase()));
+    const merged: Product[] = [...mapped];
+    for (const p of demoProducts) {
+      if (!existingSlugs.has(p.slug.toLowerCase())) {
+        merged.push(p);
+      }
+    }
+    return merged;
   } catch (e) {
     return demoProducts;
   }
@@ -914,7 +923,28 @@ export async function getCategories(): Promise<Category[]> {
 }
 
 export async function getProductBySlug(slug: string): Promise<Product | null> {
+  const cleanSlug = decodeURIComponent(slug || "").trim().toLowerCase();
   const products = await getProducts();
-  return products.find(p => p.slug === slug) || null;
+  let found = products.find(p => p.slug.toLowerCase() === cleanSlug || p.id.toLowerCase() === cleanSlug);
+  if (found) return found;
+
+  const words = cleanSlug.split("-").filter(w => w.length > 1);
+  found = products.find(p => {
+    const pSlugNorm = p.slug.toLowerCase().replace(/-/g, "");
+    const pSlug = p.slug.toLowerCase();
+    const pName = p.name.toLowerCase();
+    return words.length > 0 && words.every(w => pSlug.includes(w) || pName.includes(w));
+  });
+  if (found) return found;
+
+  let fallback = demoProducts.find(p => p.slug.toLowerCase() === cleanSlug || p.id.toLowerCase() === cleanSlug);
+  if (fallback) return fallback;
+
+  return demoProducts.find(p => {
+    const pSlugNorm = p.slug.toLowerCase().replace(/-/g, "");
+    const pSlug = p.slug.toLowerCase();
+    const pName = p.name.toLowerCase();
+    return words.length > 0 && words.every(w => pSlug.includes(w) || pName.includes(w));
+  }) || null;
 }
 

@@ -8,6 +8,7 @@ import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { useCart } from "@/components/cart-provider";
 import { money } from "@/lib/products";
+import { useAuth } from "@/components/auth-provider";
 import { lookupPincode, validateAddressDetails } from "@/lib/pincode-validator";
 
 // Declare Razorpay window global
@@ -30,6 +31,7 @@ const INDIAN_STATES = [
 export default function CheckoutPage() {
   const router = useRouter();
   const { items, subtotal, discount, shippingFee, total, appliedCoupon, clearCart } = useCart();
+  const { user, profile } = useAuth();
 
   const [form, setForm] = useState({
     name: "",
@@ -41,6 +43,51 @@ export default function CheckoutPage() {
     pincode: "",
     landmark: ""
   });
+
+  useEffect(() => {
+    if (profile || user) {
+      setForm(prev => ({
+        ...prev,
+        name: prev.name || profile?.name || user?.user_metadata?.full_name || user?.user_metadata?.name || "",
+        email: prev.email || profile?.email || user?.email || "",
+        phone: prev.phone || profile?.phone || user?.user_metadata?.phone || "",
+        address: prev.address || profile?.address || user?.user_metadata?.address || "",
+        city: prev.city || profile?.city || user?.user_metadata?.city || "",
+        state: prev.state || profile?.state || user?.user_metadata?.state || "Telangana",
+        pincode: prev.pincode || profile?.pincode || user?.user_metadata?.pincode || ""
+      }));
+    }
+  }, [user, profile]);
+
+  const saveOrderLocally = (orderNum: string, pMethod: string) => {
+    try {
+      const saved = {
+        orderNumber: orderNum,
+        createdAt: new Date().toISOString(),
+        customer: { ...form },
+        items: items.map(i => ({
+          id: i.product.id,
+          name: i.product.name,
+          price: i.product.price,
+          image: i.product.image,
+          quantity: i.quantity,
+          variant: i.variant
+        })),
+        subtotal,
+        discount,
+        shippingFee,
+        total,
+        paymentMethod: pMethod,
+        status: "Confirmed",
+        courier: "BlueDart Express"
+      };
+      const key = user?.id ? `owlera-orders-${user.id}` : "owlera-customer-orders";
+      const existing = JSON.parse(localStorage.getItem(key) || "[]");
+      localStorage.setItem(key, JSON.stringify([saved, ...existing.filter((o: any) => o.orderNumber !== orderNum)]));
+      const general = JSON.parse(localStorage.getItem("owlera-customer-orders") || "[]");
+      localStorage.setItem("owlera-customer-orders", JSON.stringify([saved, ...general.filter((o: any) => o.orderNumber !== orderNum)]));
+    } catch (e) {}
+  };
 
   const [busy, setBusy] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
@@ -235,6 +282,7 @@ export default function CheckoutPage() {
                 throw new Error(verifyData.error || "Payment signature verification failed.");
               }
 
+              saveOrderLocally(data.orderNumber, "Razorpay");
               clearCart();
               router.push(`/order-success?orderNumber=${encodeURIComponent(data.orderNumber)}`);
             } catch (vErr: any) {
@@ -263,6 +311,7 @@ export default function CheckoutPage() {
 
       // 3. Handle Demo / Test Mode Flow (when Razorpay credentials are not yet set)
       if (data.mode === "demo") {
+        saveOrderLocally(data.orderNumber, "Express / Test");
         clearCart();
         router.push(
           `/order-success?orderNumber=${encodeURIComponent(data.orderNumber)}&demo=1`
@@ -306,6 +355,38 @@ export default function CheckoutPage() {
             Secure Checkout
           </h1>
         </div>
+
+        {!user && (
+          <div
+            style={{
+              background: "#F5F3ED",
+              border: "1px solid var(--border-color)",
+              borderRadius: "var(--radius-sm)",
+              padding: "12px 18px",
+              marginBottom: "24px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "space-between",
+              flexWrap: "wrap",
+              gap: "10px",
+              fontSize: "13px"
+            }}
+          >
+            <span style={{ color: "var(--deep-charcoal)" }}>
+              Already registered with OWLERA?
+            </span>
+            <Link
+              href="/auth/login?next=/checkout"
+              style={{
+                color: "var(--forest-green)",
+                fontWeight: 600,
+                textDecoration: "underline"
+              }}
+            >
+              Sign In for Saved Addresses &amp; Faster Checkout →
+            </Link>
+          </div>
+        )}
 
         <div className="checkout-grid">
           {/* Left Column: Customer & Delivery Address Form */}

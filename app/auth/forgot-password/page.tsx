@@ -6,8 +6,10 @@ import { ArrowLeft, ArrowRight, Mail, CheckCircle } from "lucide-react";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { createClient } from "@/lib/supabase-browser";
+import { useAuth } from "@/components/auth-provider";
 
 export default function ForgotPasswordPage() {
+  const { forgotPassword } = useAuth();
   const [email, setEmail] = useState("");
   const [loading, setLoading] = useState(false);
   const [submitted, setSubmitted] = useState(false);
@@ -24,19 +26,9 @@ export default function ForgotPasswordPage() {
     setErrorMsg("");
 
     try {
-      const supabase = createClient();
-      if (!supabase) {
-        setErrorMsg("Authentication service is currently offline. Please try again shortly.");
-        setLoading(false);
-        return;
-      }
-
-      const { error } = await supabase.auth.resetPasswordForEmail(email, {
-        redirectTo: `${window.location.origin}/auth/callback?next=/account`
-      });
-
-      if (error) {
-        setErrorMsg(error.message || "Failed to send reset email.");
+      const res = await forgotPassword(email);
+      if (!res.success) {
+        setErrorMsg(res.error || "Failed to send reset email.");
       } else {
         setSubmitted(true);
       }

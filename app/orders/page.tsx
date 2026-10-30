@@ -16,6 +16,7 @@ import {
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { money } from "@/lib/products";
+import { useAuth } from "@/components/auth-provider";
 
 function TrackOrderContent() {
   const searchParams = useSearchParams();
@@ -26,6 +27,23 @@ function TrackOrderContent() {
   const [orderData, setOrderData] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const { user } = useAuth();
+  const [myOrders, setMyOrders] = useState<any[]>([]);
+
+  useEffect(() => {
+    try {
+      const key = user?.id ? `owlera-orders-${user.id}` : "owlera-customer-orders";
+      const local = JSON.parse(localStorage.getItem(key) || "[]");
+      const general = JSON.parse(localStorage.getItem("owlera-customer-orders") || "[]");
+      const combined = [...local];
+      for (const g of general) {
+        if (!combined.some((c: any) => c.orderNumber === g.orderNumber)) {
+          combined.push(g);
+        }
+      }
+      setMyOrders(combined);
+    } catch (e) {}
+  }, [user]);
 
   const fetchOrder = async (ref: string, cont?: string) => {
     if (!ref.trim()) return;
@@ -98,6 +116,99 @@ function TrackOrderContent() {
             Enter your unique order reference and contact details to inspect the live dispatch and courier tracking status.
           </p>
         </div>
+
+        {/* Customer Order History */}
+        {myOrders.length > 0 && (
+          <div style={{ marginBottom: "36px" }}>
+            <h2 style={{ fontFamily: "var(--font-serif)", fontSize: "22px", color: "var(--dark-green)", marginBottom: "16px" }}>
+              My Orders ({myOrders.length})
+            </h2>
+            <div style={{ display: "grid", gap: "16px" }}>
+              {myOrders.map(order => (
+                <div
+                  key={order.orderNumber}
+                  style={{
+                    background: "#FFFFFF",
+                    border: "1px solid var(--border-color)",
+                    borderRadius: "var(--radius-sm)",
+                    padding: "20px",
+                    boxShadow: "var(--shadow-sm)"
+                  }}
+                >
+                  <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "10px", borderBottom: "1px solid var(--border-color)", paddingBottom: "12px", marginBottom: "14px" }}>
+                    <div>
+                      <span style={{ fontSize: "11px", fontWeight: 700, letterSpacing: "1px", color: "var(--muted-gold)" }}>ORDER REF</span>
+                      <div style={{ fontSize: "16px", fontWeight: 700, color: "var(--dark-green)" }}>{order.orderNumber}</div>
+                      <span style={{ fontSize: "12px", color: "var(--secondary-text)" }}>
+                        Placed on {new Date(order.createdAt).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" })}
+                      </span>
+                    </div>
+                    <div style={{ textAlign: "right" }}>
+                      <span style={{
+                        display: "inline-block",
+                        padding: "4px 10px",
+                        borderRadius: "20px",
+                        fontSize: "11px",
+                        fontWeight: 600,
+                        background: "#E8F5E9",
+                        color: "#2E7D32"
+                      }}>
+                        {order.status || "Confirmed"}
+                      </span>
+                      <div style={{ fontSize: "15px", fontWeight: 700, color: "var(--dark-green)", marginTop: "4px" }}>
+                        {money(order.total)}
+                      </div>
+                    </div>
+                  </div>
+
+                  <div style={{ display: "grid", gap: "10px", marginBottom: "16px" }}>
+                    {order.items?.map((item: any, idx: number) => (
+                      <div key={idx} style={{ display: "flex", alignItems: "center", gap: "12px" }}>
+                        {item.image && (
+                          <img
+                            src={item.image}
+                            alt={item.name}
+                            style={{ width: "42px", height: "42px", objectFit: "cover", borderRadius: "4px", border: "1px solid var(--border-color)" }}
+                          />
+                        )}
+                        <div style={{ flex: 1 }}>
+                          <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--dark-green)" }}>{item.name}</div>
+                          <div style={{ fontSize: "11.5px", color: "var(--secondary-text)" }}>
+                            Qty: {item.quantity} {item.variant ? `• Size: ${item.variant}` : ""}
+                          </div>
+                        </div>
+                        <div style={{ fontSize: "13px", fontWeight: 600, color: "var(--dark-green)" }}>
+                          {money(item.price * item.quantity)}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
+
+                  <div style={{ display: "flex", justifyContent: "flex-end", gap: "10px" }}>
+                    <button
+                      type="button"
+                      className="btn btn-secondary"
+                      style={{ fontSize: "12px", padding: "8px 16px" }}
+                      onClick={() => {
+                        setOrderNumber(order.orderNumber);
+                        fetchOrder(order.orderNumber);
+                      }}
+                    >
+                      <Truck size={14} /> Track Status
+                    </button>
+                    <Link
+                      href={`/order-success?orderNumber=${encodeURIComponent(order.orderNumber)}`}
+                      className="btn btn-primary"
+                      style={{ fontSize: "12px", padding: "8px 16px" }}
+                    >
+                      <ExternalLink size={14} /> View Receipt
+                    </Link>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+        )}
 
         {/* Search Box */}
         <div
