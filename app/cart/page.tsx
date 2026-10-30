@@ -16,6 +16,7 @@ import {
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 import { useCart } from "@/components/cart-provider";
+import { useAuth } from "@/components/auth-provider";
 import { money } from "@/lib/products";
 
 export default function CartPage() {
@@ -33,6 +34,7 @@ export default function CartPage() {
     applyCoupon,
     removeCoupon
   } = useCart();
+  const { user } = useAuth();
 
   const [couponInput, setCouponInput] = useState("");
   const [couponMsg, setCouponMsg] = useState<{ text: string; isError: boolean } | null>(null);
@@ -196,7 +198,10 @@ export default function CartPage() {
               </div>
 
               {/* Checkout CTA */}
-              <Link href="/checkout" className="android-checkout-btn">
+              <Link
+                href={user ? "/checkout" : "/auth/login?next=/checkout"}
+                className="android-checkout-btn"
+              >
                 Proceed to Checkout <ArrowRight size={16} />
               </Link>
             </div>

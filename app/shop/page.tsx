@@ -44,14 +44,25 @@ function ShopContent() {
   const filteredProducts = useMemo(() => {
     return products
       .filter(p => {
-        // Category filter
+        // Category filter (Matches all 12 OWLERA departments)
         if (selectedCategory !== "all") {
           const catLower = p.category.toLowerCase();
           const slugLower = (p.categorySlug || "").toLowerCase();
           const matchCat =
             catLower === selectedCategory ||
             slugLower === selectedCategory ||
-            (selectedCategory === "home-decor" && catLower === "home decor") ||
+            (selectedCategory === "fashion" && (catLower.includes("fashion") || catLower.includes("clothing") || slugLower.includes("fashion"))) ||
+            (selectedCategory === "crafts-handmade" && (catLower.includes("craft") || catLower.includes("handmade"))) ||
+            (selectedCategory === "candles" && (catLower.includes("candle") || p.slug.toLowerCase().includes("candle"))) ||
+            (selectedCategory === "room-fresheners" && (catLower.includes("room") || p.slug.toLowerCase().includes("room"))) ||
+            (selectedCategory === "car-fresheners" && (catLower.includes("car") || p.slug.toLowerCase().includes("car"))) ||
+            (selectedCategory === "bathroom-fresheners" && (catLower.includes("bathroom") || p.slug.toLowerCase().includes("bathroom"))) ||
+            (selectedCategory === "home-decor" && (catLower.includes("home") || catLower.includes("decor"))) ||
+            (selectedCategory === "pooja-spiritual" && (catLower.includes("pooja") || catLower.includes("spiritual"))) ||
+            (selectedCategory === "jewellery" && (catLower.includes("jewel") || catLower.includes("bracelet"))) ||
+            (selectedCategory === "lifestyle" && catLower.includes("lifestyle")) ||
+            (selectedCategory === "accessories" && catLower.includes("accessor")) ||
+            (selectedCategory === "gifts" && (catLower.includes("gift") || slugLower.includes("gift"))) ||
             (selectedCategory === "pooja-spiritual" && (catLower === "pooja & spiritual" || catLower.includes("pooja"))) ||
             (selectedCategory === "gifts" && (catLower === "gifting" || slugLower === "gifting")) ||
             (selectedCategory === "gifting" && (catLower === "gifts" || slugLower === "gifts"));
@@ -174,13 +185,25 @@ function ShopContent() {
               <div className="filter-options">
                 {[
                   { id: "all", label: "All Categories" },
-                  { id: "jewellery", label: "Jewellery" },
-                  { id: "fashion", label: "Fashion & Accessories" },
-                  { id: "lifestyle", label: "Lifestyle & Sanctuary" },
+                  { id: "fashion", label: "Fashion & Clothing" },
+                  { id: "crafts-handmade", label: "Handmade Crafts" },
+                  { id: "candles", label: "Candles" },
+                  { id: "room-fresheners", label: "Room Fresheners" },
+                  { id: "car-fresheners", label: "Car Fresheners" },
+                  { id: "bathroom-fresheners", label: "Bathroom Fresheners" },
                   { id: "home-decor", label: "Home Decor" },
+
                   { id: "pooja-spiritual", label: "Pooja & Spiritual" },
-                  { id: "gifts", label: "Curated Gift Suites" }
-                ].map(cat => (
+                  { id: "jewellery", label: "Jewellery & Bracelets" },
+                  { id: "lifestyle", label: "Lifestyle Products" },
+                  { id: "accessories", label: "Accessories" },
+                  { id: "gifts", label: "Curated Gifts" },
+
+
+
+                  { id: "pooja-spiritual", label: "Pooja & Spiritual" },
+
+                ].filter((c, idx, arr) => arr.findIndex(x => x.id === c.id) === idx).map(cat => (
                   <label key={cat.id} className="filter-label">
                     <input
                       type="radio"

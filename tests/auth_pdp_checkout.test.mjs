@@ -12,6 +12,7 @@ async function runTests() {
     { url: "/auth/login", name: "Auth: Login Page" },
     { url: "/auth/register", name: "Auth: Register Page" },
     { url: "/auth/forgot-password", name: "Auth: Forgot Password Page" },
+    { url: "/auth/reset-password", name: "Auth: Reset Password Page" },
     { url: "/account", name: "Account: Customer Profile & Menu Page" },
     { url: "/cart", name: "Cart: Your Cart View" },
     { url: "/checkout", name: "Checkout: Address & Payment Page" },
