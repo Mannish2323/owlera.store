@@ -1691,7 +1691,7 @@ img {
   position: fixed;
   bottom: 28px;
   right: 28px;
-  z-index: 45;
+  z-index: 105;
   background-color: #25D366;
   color: #FFFFFF;
   width: 54px;
@@ -1701,6 +1701,8 @@ img {
   place-items: center;
   box-shadow: 0 8px 24px rgba(37, 211, 102, 0.35);
   transition: transform 0.25s ease, box-shadow 0.25s ease;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
 }
 
 .floating-whatsapp:hover {
@@ -2559,18 +2561,18 @@ img {
     font-size: 13.5px !important;
   }
 
-  /* 7. Floating WhatsApp Button (48px, safe margins, non-blocking) */
+  /* 7. Floating WhatsApp Button (Positioned above bottom nav with Android safe insets) */
   .floating-whatsapp {
     width: 48px !important;
     height: 48px !important;
-    bottom: calc(18px + env(safe-area-inset-bottom, 0px)) !important;
-    right: 16px !important;
-    box-shadow: 0 4px 16px rgba(37, 211, 102, 0.35) !important;
-    z-index: 45 !important;
+    bottom: calc(72px + env(safe-area-inset-bottom, 0px)) !important;
+    right: calc(16px + env(safe-area-inset-right, 0px)) !important;
+    box-shadow: 0 4px 18px rgba(37, 211, 102, 0.4) !important;
+    z-index: 105 !important;
   }
   .floating-whatsapp svg {
-    width: 22px !important;
-    height: 22px !important;
+    width: 24px !important;
+    height: 24px !important;
   }
 
   /* 8. Mobile Footer (Accordions for clean spacing, no excessive scrolling) */
@@ -2998,12 +3000,30 @@ img {
   body {
     padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px)) !important;
   }
+  .floating-whatsapp,
   .floating-whatsapp-btn {
-    bottom: calc(68px + env(safe-area-inset-bottom, 0px)) !important;
-    right: 14px !important;
+    position: fixed !important;
+    bottom: calc(72px + env(safe-area-inset-bottom, 0px)) !important;
+    right: calc(16px + env(safe-area-inset-right, 0px)) !important;
+    z-index: 105 !important;
   }
   .header-desktop-action {
     display: none !important;
+  }
+}
+
+@media (max-width: 360px) {
+  .floating-whatsapp,
+  .floating-whatsapp-btn {
+    width: 44px !important;
+    height: 44px !important;
+    bottom: calc(68px + env(safe-area-inset-bottom, 0px)) !important;
+    right: calc(12px + env(safe-area-inset-right, 0px)) !important;
+  }
+  .floating-whatsapp svg,
+  .floating-whatsapp-btn svg {
+    width: 22px !important;
+    height: 22px !important;
   }
 }
 

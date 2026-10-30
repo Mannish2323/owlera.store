@@ -1,9 +1,17 @@
 "use client";
 
 import React from "react";
+import { usePathname } from "next/navigation";
 import { MessageCircle } from "lucide-react";
 
 export function WhatsAppFloat() {
+  const pathname = usePathname();
+
+  // Hide on admin portal to prevent covering admin tables and analytics
+  if (pathname && pathname.startsWith("/admin")) {
+    return null;
+  }
+
   const whatsappUrl = `https://wa.me/916305630468?text=${encodeURIComponent(
     "Hello OWLERA Concierge! I would like to enquire about your jewellery, gifting collections, or pan-India delivery."
   )}`;
