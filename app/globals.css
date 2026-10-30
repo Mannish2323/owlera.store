@@ -2910,3 +2910,1179 @@ img {
     padding: 8px 10px !important;
   }
 }
+
+/* ====================================================================
+   OWLERA ANDROID MOBILE UI OPTIMIZATION (Matches Master Reference)
+   ==================================================================== */
+
+/* --- Android Bottom Navigation Bar --- */
+.android-bottom-nav {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 99;
+  background: #0E261E;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.25);
+}
+
+@media (min-width: 769px) {
+  .android-bottom-nav {
+    display: none !important;
+  }
+}
+
+.bottom-nav-inner {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  height: 56px;
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 0 4px;
+}
+
+.bottom-nav-item {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  color: #8B9E94;
+  text-decoration: none;
+  font-size: 10px;
+  font-weight: 500;
+  gap: 3px;
+  min-width: 54px;
+  transition: all 0.2s ease;
+  padding: 4px 0;
+}
+
+.bottom-nav-item.active {
+  color: #C5A880 !important;
+  font-weight: 600;
+}
+
+.bottom-nav-icon-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 22px;
+}
+
+.bottom-nav-badge {
+  position: absolute;
+  top: -4px;
+  right: -8px;
+  background: #C0392B;
+  color: #FFFFFF;
+  font-size: 9px;
+  font-weight: 700;
+  border-radius: 999px;
+  height: 14px;
+  min-width: 14px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 3px;
+}
+
+.bottom-nav-label {
+  letter-spacing: 0.02em;
+}
+
+/* --- Android Mobile Body & Floating Elements Handling --- */
+@media (max-width: 768px) {
+  body {
+    padding-bottom: calc(56px + env(safe-area-inset-bottom, 0px)) !important;
+  }
+  .floating-whatsapp-btn {
+    bottom: calc(68px + env(safe-area-inset-bottom, 0px)) !important;
+    right: 14px !important;
+  }
+  .header-desktop-action {
+    display: none !important;
+  }
+}
+
+/* --- Android Hero Banner (Screen 1) --- */
+.android-hero-banner {
+  position: relative;
+  min-height: 260px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  color: #FFFFFF;
+  margin-bottom: 4px;
+}
+
+.hero-banner-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.hero-banner-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center right;
+}
+
+.hero-banner-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(14, 38, 30, 0.92) 0%, rgba(14, 38, 30, 0.75) 55%, rgba(14, 38, 30, 0.35) 100%);
+}
+
+.hero-banner-content {
+  position: relative;
+  z-index: 2;
+  padding: 30px 16px 20px;
+  max-width: 600px;
+}
+
+.hero-banner-title {
+  font-family: var(--font-serif);
+  font-size: clamp(28px, 6.5vw, 40px);
+  line-height: 1.12;
+  font-weight: 500;
+  margin: 0 0 8px;
+  color: #F8F6F0;
+  letter-spacing: -0.01em;
+}
+
+.hero-banner-sub {
+  font-size: 11px;
+  color: rgba(248, 246, 240, 0.85);
+  margin: 0 0 16px;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+}
+
+.hero-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #C5A880;
+  color: #0E261E;
+  border-radius: 999px;
+  padding: 8px 18px;
+  font-size: 12px;
+  font-weight: 600;
+  text-decoration: none;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  transition: opacity 0.2s;
+}
+
+.hero-slider-dots {
+  display: flex;
+  gap: 6px;
+  margin-top: 18px;
+}
+
+.hero-slider-dots .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.3);
+  display: inline-block;
+}
+
+.hero-slider-dots .dot.active {
+  background: #C5A880;
+  width: 14px;
+  border-radius: 999px;
+}
+
+/* --- Android Trust Features Bar --- */
+.android-trust-features {
+  padding: 14px 0 12px;
+  background: #FBF9F5;
+  border-bottom: 1px solid var(--border-color);
+}
+
+.trust-features-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 4px;
+  text-align: center;
+}
+
+.trust-feature-col {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 5px;
+}
+
+.trust-feature-icon-circle {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: rgba(18, 61, 46, 0.06);
+  display: grid;
+  place-items: center;
+  color: var(--forest-green);
+}
+
+.trust-feature-text {
+  font-size: 9.5px;
+  font-weight: 600;
+  color: var(--deep-charcoal);
+  line-height: 1.2;
+}
+
+/* --- Compact Section Headers --- */
+.section-compact {
+  padding: 20px 0 8px;
+}
+
+.compact-section-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 12px;
+}
+
+.compact-section-title {
+  font-family: var(--font-serif);
+  font-size: 19px;
+  color: var(--deep-charcoal);
+  font-weight: 600;
+  margin: 0;
+}
+
+.compact-section-link {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11.5px;
+  font-weight: 500;
+  color: var(--secondary-text);
+  text-decoration: none;
+}
+
+/* --- Android Category Grid (4 Columns x 2 Rows) --- */
+.android-category-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px 8px;
+}
+
+.android-category-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-decoration: none;
+  text-align: center;
+}
+
+.android-category-thumb {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 12px;
+  background: #F3EFE7;
+  overflow: hidden;
+  border: 1px solid rgba(0, 0, 0, 0.04);
+}
+
+.android-category-thumb img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.25s ease;
+}
+
+.android-category-card:active .android-category-thumb img {
+  transform: scale(0.97);
+}
+
+.android-category-name {
+  font-size: 10.5px;
+  font-weight: 500;
+  color: var(--deep-charcoal);
+  margin-top: 5px;
+  line-height: 1.2;
+  text-align: center;
+}
+
+/* --- Android Promotional Banners (Screens 1 & 2) --- */
+.android-promo-section {
+  padding: 14px 0 6px;
+}
+
+.android-promo-card {
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  align-items: center;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #11281F;
+  color: #FFFFFF;
+  text-decoration: none;
+  min-height: 120px;
+}
+
+.promo-card-content {
+  padding: 16px 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.promo-badge {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #C5A880;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+
+.promo-title {
+  font-family: var(--font-serif);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.25;
+  margin: 0 0 10px;
+  color: #FAF8F5;
+}
+
+.promo-pill-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: #C5A880;
+  color: #0E261E;
+  border-radius: 999px;
+  padding: 5px 12px;
+  font-size: 11px;
+  font-weight: 600;
+}
+
+.promo-card-image {
+  height: 100%;
+  min-height: 120px;
+}
+
+.promo-card-image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* --- Android 4-Column Product Grid (Matches Screen 2 & 3) --- */
+.android-products-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+@media (max-width: 360px) {
+  .android-products-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 6px;
+  }
+}
+
+@media (min-width: 769px) {
+  .android-products-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 20px;
+  }
+}
+
+.android-products-grid .premium-product-card {
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 10px;
+  background: #FFFFFF;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.android-products-grid .product-media-wrap {
+  aspect-ratio: 1 / 1;
+  position: relative;
+  background: #F9F7F2;
+}
+
+.android-products-grid .product-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.android-products-grid .wishlist-action-btn {
+  position: absolute;
+  top: 5px;
+  right: 5px;
+  width: 22px;
+  height: 22px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.85);
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: #555;
+  cursor: pointer;
+}
+
+.android-products-grid .product-details {
+  padding: 6px 6px 8px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.android-products-grid .product-dept-label {
+  display: none;
+}
+
+.android-products-grid .product-card-title {
+  font-size: 11px;
+  font-weight: 500;
+  line-height: 1.25;
+  margin: 0 0 4px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  color: var(--deep-charcoal);
+}
+
+.product-bottom-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: auto;
+  gap: 2px;
+}
+
+.compact-cart-btn {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: #123D2E;
+  color: #FFFFFF;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: transform 0.15s;
+}
+
+.compact-cart-btn:active {
+  transform: scale(0.9);
+}
+
+.compact-cart-btn.added {
+  background: #2E7D32;
+}
+
+.android-products-grid .product-current-price {
+  font-size: 11.5px;
+  font-weight: 700;
+  color: var(--deep-charcoal);
+}
+
+/* --- Screen 2: All Categories Page Grid --- */
+.all-categories-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px 8px;
+}
+
+.all-category-tile {
+  display: flex;
+  flex-direction: column;
+  text-decoration: none;
+}
+
+.all-category-img-box {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  border-radius: 12px;
+  overflow: hidden;
+  position: relative;
+  background: #1B2E24;
+}
+
+.all-category-img-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.all-category-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(0,0,0,0.1) 0%, rgba(0,0,0,0.45) 100%);
+}
+
+.all-category-meta {
+  margin-top: 4px;
+  display: flex;
+  flex-direction: column;
+}
+
+.all-category-title {
+  font-size: 11px;
+  font-weight: 600;
+  color: var(--deep-charcoal);
+  line-height: 1.2;
+}
+
+.all-category-count {
+  font-size: 9.5px;
+  color: var(--secondary-text);
+}
+
+/* --- Screen 3: Category View & Subcategory Pills --- */
+.category-hero-banner {
+  position: relative;
+  min-height: 120px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  color: #FFFFFF;
+  margin-bottom: 12px;
+}
+
+.category-hero-backdrop {
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+}
+
+.category-hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.category-hero-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(90deg, rgba(14, 38, 30, 0.94) 0%, rgba(14, 38, 30, 0.7) 100%);
+}
+
+.category-hero-content {
+  position: relative;
+  z-index: 2;
+  padding: 24px 16px;
+}
+
+.category-hero-title {
+  font-family: var(--font-serif);
+  font-size: 26px;
+  font-weight: 500;
+  margin: 0 0 2px;
+  color: #FAF8F5;
+}
+
+.category-hero-subtitle {
+  font-size: 12px;
+  color: rgba(250, 248, 245, 0.85);
+  margin: 0;
+}
+
+.subcategory-pills-bar {
+  padding-bottom: 8px;
+}
+
+.subcategory-pills-scroll {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 4px 0;
+}
+
+.subcategory-pills-scroll::-webkit-scrollbar {
+  display: none;
+}
+
+.subcategory-pill {
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: #FFFFFF;
+  border: 1px solid var(--border-color);
+  font-size: 11.5px;
+  color: var(--deep-charcoal);
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.subcategory-pill.active {
+  background: #123D2E;
+  color: #FFFFFF;
+  border-color: #123D2E;
+  font-weight: 500;
+}
+
+/* --- Screen 4: Product Detail Page (PDP) Mobile Refinements --- */
+.pdp-main-image-box {
+  position: relative;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #F9F7F2;
+  aspect-ratio: 1 / 1;
+  max-width: 480px;
+  margin: 0 auto;
+}
+
+.pdp-main-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pdp-floating-wishlist {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+}
+
+.pdp-slider-dots {
+  display: flex;
+  justify-content: center;
+  gap: 6px;
+  margin-top: 10px;
+}
+
+.pdp-slider-dots .dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #D8D2C5;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+}
+
+.pdp-slider-dots .dot.active {
+  background: #123D2E;
+  width: 12px;
+  border-radius: 999px;
+}
+
+.pdp-title-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 10px;
+  margin: 6px 0 10px;
+}
+
+.pdp-rating-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--deep-charcoal);
+  background: rgba(212, 175, 55, 0.12);
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.pdp-features-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  text-align: center;
+  margin: 18px 0;
+}
+
+.pdp-feature-chip {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+
+.pdp-feature-icon-circle {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: #F4EFE6;
+  display: grid;
+  place-items: center;
+  color: var(--dark-green);
+}
+
+.pdp-feature-chip span {
+  font-size: 9.5px;
+  font-weight: 500;
+  color: var(--deep-charcoal);
+  line-height: 1.2;
+}
+
+.pdp-variant-label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--deep-charcoal);
+  margin-bottom: 6px;
+}
+
+.pdp-variant-pills {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.variant-pill {
+  padding: 6px 16px;
+  border-radius: 999px;
+  border: 1px solid var(--border-color);
+  font-size: 12px;
+  background: #FFFFFF;
+  color: var(--deep-charcoal);
+  cursor: pointer;
+}
+
+.variant-pill.active {
+  background: #123D2E;
+  color: #FFFFFF;
+  border-color: #123D2E;
+  font-weight: 600;
+}
+
+/* Sticky Action Bar on Android Mobile */
+.android-sticky-pdp-bar {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  .android-sticky-pdp-bar {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 101;
+    background: #FFFFFF;
+    border-top: 1px solid var(--border-color);
+    padding: 10px 16px calc(10px + env(safe-area-inset-bottom, 0px));
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    box-shadow: 0 -4px 16px rgba(0, 0, 0, 0.08);
+  }
+  .pdp-desktop-actions {
+    display: none !important;
+  }
+}
+
+.pdp-bottom-stepper {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  background: #F9F7F2;
+  height: 44px;
+}
+
+.pdp-bottom-stepper .stepper-btn {
+  width: 36px;
+  height: 42px;
+  background: none;
+  border: none;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  color: var(--deep-charcoal);
+}
+
+.pdp-bottom-stepper .stepper-num {
+  min-width: 24px;
+  text-align: center;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.pdp-bottom-add-btn {
+  flex: 1;
+  height: 44px;
+  border-radius: 8px;
+  background: #123D2E;
+  color: #FFFFFF;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 13.5px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.pdp-bottom-add-btn.added {
+  background: #2E7D32;
+}
+
+/* --- Screen 5: Cart Page Mobile Styling --- */
+.android-cart-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.android-cart-title {
+  font-family: var(--font-serif);
+  font-size: 24px;
+  font-weight: 600;
+  margin: 0;
+  color: var(--deep-charcoal);
+}
+
+.android-cart-delete-all {
+  font-size: 12px;
+  color: var(--secondary-text);
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+
+.android-cart-item-card {
+  display: grid;
+  grid-template-columns: 80px 1fr;
+  gap: 12px;
+  background: #FFFFFF;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 10px;
+  margin-bottom: 10px;
+}
+
+.cart-item-thumb-box {
+  width: 80px;
+  aspect-ratio: 1 / 1;
+  border-radius: 8px;
+  overflow: hidden;
+  position: relative;
+  background: #F9F7F2;
+}
+
+.cart-item-thumb-box img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.cart-item-heart-btn {
+  position: absolute;
+  top: 4px;
+  right: 4px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.9);
+  border: none;
+  display: grid;
+  place-items: center;
+  color: #666;
+}
+
+.cart-item-details-box {
+  display: flex;
+  flex-direction: column;
+}
+
+.cart-item-top-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.cart-item-name {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--deep-charcoal);
+  text-decoration: none;
+  line-height: 1.25;
+}
+
+.cart-item-trash-btn {
+  background: none;
+  border: none;
+  color: var(--secondary-text);
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.cart-item-price-row {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+  margin: 4px 0 2px;
+}
+
+.cart-item-price {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--deep-charcoal);
+}
+
+.cart-item-compare {
+  font-size: 11px;
+  text-decoration: line-through;
+  color: var(--secondary-text);
+}
+
+.cart-item-variant-label {
+  font-size: 11px;
+  color: var(--secondary-text);
+  margin-bottom: 6px;
+}
+
+.android-cart-stepper {
+  display: inline-flex;
+  align-items: center;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background: #F9F7F2;
+  height: 28px;
+}
+
+.android-cart-stepper button {
+  width: 26px;
+  height: 26px;
+  border: none;
+  background: none;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  color: var(--deep-charcoal);
+}
+
+.android-cart-stepper span {
+  min-width: 20px;
+  text-align: center;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.android-cart-summary-box {
+  background: #FFFFFF;
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 16px;
+  margin-top: 14px;
+}
+
+.android-coupon-form {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.coupon-input-wrap {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.coupon-tag-icon {
+  position: absolute;
+  left: 10px;
+  color: var(--secondary-text);
+}
+
+.android-coupon-input {
+  width: 100%;
+  padding: 10px 10px 10px 32px;
+  border-radius: 8px;
+  border: 1px solid var(--border-color);
+  font-size: 13px;
+}
+
+.android-coupon-apply-btn {
+  background: #123D2E;
+  color: #FFFFFF;
+  border: none;
+  border-radius: 8px;
+  padding: 0 18px;
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.android-breakdown-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  font-size: 13px;
+  border-top: 1px solid #F0ECE4;
+  padding-top: 12px;
+}
+
+.breakdown-row {
+  display: flex;
+  justify-content: space-between;
+  color: var(--secondary-text);
+}
+
+.breakdown-row.discount {
+  color: #2E7D32;
+}
+
+.breakdown-row.total {
+  font-size: 15px;
+  font-weight: 700;
+  color: var(--deep-charcoal);
+  border-top: 1px solid #F0ECE4;
+  padding-top: 8px;
+  margin-top: 4px;
+}
+
+.android-checkout-btn {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+  background: #123D2E;
+  color: #FFFFFF;
+  border-radius: 10px;
+  height: 48px;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  margin-top: 16px;
+}
+
+/* --- Screen 6: Account Page Mobile Styling --- */
+.android-profile-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 16px;
+  background: #FFFFFF;
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  margin-bottom: 18px;
+}
+
+.profile-avatar-circle {
+  width: 54px;
+  height: 54px;
+  border-radius: 50%;
+  background: #4B6B56;
+  display: grid;
+  place-items: center;
+}
+
+.profile-meta-box {
+  display: flex;
+  flex-direction: column;
+}
+
+.profile-user-name {
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--deep-charcoal);
+  margin: 0 0 2px;
+}
+
+.profile-user-email {
+  font-size: 12px;
+  color: var(--secondary-text);
+  margin-bottom: 4px;
+}
+
+.profile-edit-btn {
+  background: none;
+  border: none;
+  padding: 0;
+  color: #AD8048;
+  font-size: 12px;
+  font-weight: 500;
+  text-align: left;
+  cursor: pointer;
+}
+
+.android-account-menu-list {
+  background: #FFFFFF;
+  border: 1px solid var(--border-color);
+  border-radius: 14px;
+  overflow: hidden;
+}
+
+.android-menu-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 13px 16px;
+  border-bottom: 1px solid #F0ECE4;
+  text-decoration: none;
+  color: var(--deep-charcoal);
+  font-size: 13.5px;
+  font-weight: 500;
+  background: none;
+  border-left: none;
+  border-right: none;
+  border-top: none;
+  width: 100%;
+  cursor: pointer;
+}
+
+.android-menu-row:last-child {
+  border-bottom: none;
+}
+
+.menu-row-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.menu-row-icon {
+  color: var(--secondary-text);
+  display: flex;
+  align-items: center;
+}
+
+.menu-row-right {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.menu-unread-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 50%;
+  background: #E74C3C;
+}
+
+.menu-chevron {
+  color: #B5AFA2;
+}
+
+.android-menu-row.logout-row {
+  color: #C0392B;
+}
+
+.android-menu-row.logout-row .menu-row-icon {
+  color: #C0392B;
+}

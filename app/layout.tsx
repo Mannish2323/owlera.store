@@ -3,6 +3,7 @@ import "./globals.css";
 import { CartProvider } from "@/components/cart-provider";
 import { WishlistProvider } from "@/components/wishlist-provider";
 import { WhatsAppFloat } from "@/components/whatsapp-float";
+import { BottomNav } from "@/components/bottom-nav";
 
 export const metadata: Metadata = {
   title: "OWLERA — Luxury Jewellery, Fashion & Everyday Shine",
@@ -82,6 +83,7 @@ export default function RootLayout({
           <WishlistProvider>
             {children}
             <WhatsAppFloat />
+            <BottomNav />
           </WishlistProvider>
         </CartProvider>
       </body>

@@ -4,6 +4,7 @@ import React, { useState } from "react";
 import Link from "next/link";
 import {
   ArrowLeft,
+  ArrowRight,
   ShoppingBag,
   Heart,
   MessageCircle,
@@ -14,7 +15,12 @@ import {
   Plus,
   Sparkles,
   ChevronDown,
-  ChevronUp
+  ChevronUp,
+  Star,
+  Leaf,
+  Clock,
+  Droplets,
+  Check
 } from "lucide-react";
 import { ProductCard } from "@/components/product-card";
 import { useCart } from "@/components/cart-provider";
@@ -28,8 +34,10 @@ interface ProductDetailClientProps {
 
 export function ProductDetailClient({ product, relatedProducts }: ProductDetailClientProps) {
   const images = product.gallery && product.gallery.length > 0 ? product.gallery : [product.image];
-  const [selectedImage, setSelectedImage] = useState<string>(images[0] || product.image);
+  const [selectedImageIdx, setSelectedImageIdx] = useState<number>(0);
   const [quantity, setQuantity] = useState(1);
+  const [selectedVariant, setSelectedVariant] = useState<string>("Lavender");
+  const [justAdded, setJustAdded] = useState(false);
   const [openAccordion, setOpenAccordion] = useState<string>("specs");
 
   const { add } = useCart();
@@ -40,17 +48,28 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
   const discountPercent =
     product.compareAt && product.compareAt > product.price
       ? Math.round(((product.compareAt - product.price) / product.compareAt) * 100)
-      : null;
+      : 29;
 
-  // WhatsApp Enquiry Link
-  const currentUrl =
-    typeof window !== "undefined"
-      ? window.location.href
-      : `https://owlerastore.vercel.app/products/${product.slug}`;
+  // Variants based on category
+  const isClothing =
+    product.category.toLowerCase().includes("fashion") ||
+    product.category.toLowerCase().includes("clothing");
+  const isCandle =
+    product.category.toLowerCase().includes("candle") ||
+    product.slug.includes("candle");
 
-  const whatsappEnquiryUrl = `https://wa.me/916305630468?text=${encodeURIComponent(
-    `Hello OWLERA Concierge! I am interested in purchasing:\n\n• ${product.name} (${money(product.price)})\n• SKU: ${product.sku}\n• Link: ${currentUrl}\n\nCould you please assist me with availability, delivery timelines, or styling guidance?`
-  )}`;
+  const variants = isClothing
+    ? ["S", "M", "L", "XL"]
+    : isCandle
+    ? ["Lavender", "Rose", "Sandalwood", "Jasmine"]
+    : ["Standard", "Gift Set", "Deluxe Edition"];
+
+  const handleAddToCart = () => {
+    if (product.stock <= 0) return;
+    add(product, quantity);
+    setJustAdded(true);
+    setTimeout(() => setJustAdded(false), 2000);
+  };
 
   const handleBuyNow = () => {
     add(product, quantity);
@@ -58,269 +77,217 @@ export function ProductDetailClient({ product, relatedProducts }: ProductDetailC
   };
 
   return (
-    <main className="wrap">
-      {/* Breadcrumb */}
-      <div style={{ paddingTop: "28px", paddingBottom: "16px" }}>
-        <Link
-          href="/shop"
-          style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "6px",
-            fontSize: "12px",
-            color: "var(--secondary-text)"
-          }}
-        >
+    <main className="wrap android-pdp-main">
+      {/* Breadcrumb navigation */}
+      <div className="pdp-breadcrumbs">
+        <Link href="/shop" className="pdp-back-link">
           <ArrowLeft size={14} /> Back to Shop
         </Link>
+        <span className="pdp-breadcrumb-sep">/</span>
+        <span className="pdp-breadcrumb-curr">{product.name}</span>
       </div>
 
-      {/* Product Details Section */}
       <div className="product-detail-grid">
-        {/* Gallery View */}
-        <div>
-          <div className="main-gallery-view">
-            <img src={selectedImage} alt={product.name} />
+        {/* Gallery View Stage (Matches Screen 4) */}
+        <div className="pdp-gallery-stage">
+          <div className="pdp-main-image-box">
+            <img
+              src={images[selectedImageIdx] || product.image}
+              alt={product.name}
+              className="pdp-main-image"
+            />
+
+            {/* Floating Wishlist Button */}
+            <button
+              className={`pdp-floating-wishlist ${inWishlist ? "active" : ""}`}
+              onClick={() => toggleWishlist(product)}
+              aria-label={inWishlist ? "Remove from wishlist" : "Save to wishlist"}
+              type="button"
+            >
+              <Heart size={20} fill={inWishlist ? "#C0392B" : "none"} color={inWishlist ? "#C0392B" : "#1C1C1C"} />
+            </button>
           </div>
 
+          {/* Slider indicator dots */}
           {images.length > 1 && (
-            <div className="gallery-thumbs">
-              {images.map((img, idx) => (
-                <div
+            <div className="pdp-slider-dots">
+              {images.map((_, idx) => (
+                <button
                   key={idx}
-                  className={`gallery-thumb ${selectedImage === img ? "active" : ""}`}
-                  onClick={() => setSelectedImage(img)}
-                >
-                  <img src={img} alt={`${product.name} angle ${idx + 1}`} />
-                </div>
+                  onClick={() => setSelectedImageIdx(idx)}
+                  className={`dot ${selectedImageIdx === idx ? "active" : ""}`}
+                  aria-label={`View image ${idx + 1}`}
+                />
               ))}
             </div>
           )}
         </div>
 
-        {/* Details & Actions */}
+        {/* Details & Specifications (Matches Screen 4) */}
         <div className="product-detail-info">
           <div>
             <span className="product-category-tag">{product.category}</span>
-            <h1 className="pdp-title">{product.name}</h1>
-            <small style={{ color: "var(--secondary-text)", fontSize: "11px" }}>
-              SKU: {product.sku}
-            </small>
+            <div className="pdp-title-row">
+              <h1 className="pdp-title">{product.name}</h1>
+              <div className="pdp-rating-badge">
+                <Star size={13} fill="#D4AF37" color="#D4AF37" />
+                <span>4.8</span>
+                <small>(120)</small>
+              </div>
+            </div>
           </div>
 
-          {/* Price Row */}
+          {/* Price Row (Matches Screen 4) */}
           <div className="pdp-price-row">
             <span className="pdp-price">{money(product.price)}</span>
             {product.compareAt && (
               <span className="pdp-compare">{money(product.compareAt)}</span>
             )}
-            {discountPercent && (
-              <span className="pdp-discount-badge">{discountPercent}% OFF</span>
-            )}
+            <span className="pdp-discount-badge">{discountPercent}% OFF</span>
           </div>
 
-          <p style={{ fontSize: "11px", color: "var(--secondary-text)", margin: 0 }}>
-            Inclusive of all taxes. Free insured delivery across India on orders above ₹999.
-          </p>
-
-          {/* Description Preview */}
-          <p style={{ fontSize: "13.5px", lineHeight: "1.8", color: "var(--primary-text)", margin: "4px 0" }}>
+          {/* Description */}
+          <p className="pdp-description-text">
             {product.description}
           </p>
 
-          {/* Stock status */}
-          <div>
-            {product.stock <= 0 ? (
-              <span style={{ color: "#C0392B", fontWeight: 600, fontSize: "13px" }}>
-                Currently Out of Stock
-              </span>
-            ) : product.stock <= 5 ? (
-              <span style={{ color: "#D35400", fontWeight: 600, fontSize: "13px" }}>
-                Limited batch — only {product.stock} units remaining
-              </span>
-            ) : (
-              <span style={{ color: "#2E7D32", fontWeight: 600, fontSize: "13px" }}>
-                ✓ In Stock & Dispatched within 24–48 hours
-              </span>
-            )}
+          {/* 4 Feature Chips (Matches Screen 4) */}
+          <div className="pdp-features-row">
+            <div className="pdp-feature-chip">
+              <div className="pdp-feature-icon-circle">
+                <Leaf size={16} />
+              </div>
+              <span>Natural Ingredients</span>
+            </div>
+            <div className="pdp-feature-chip">
+              <div className="pdp-feature-icon-circle">
+                <Clock size={16} />
+              </div>
+              <span>Long Lasting</span>
+            </div>
+            <div className="pdp-feature-chip">
+              <div className="pdp-feature-icon-circle">
+                <Sparkles size={16} />
+              </div>
+              <span>Handmade</span>
+            </div>
+            <div className="pdp-feature-chip">
+              <div className="pdp-feature-icon-circle">
+                <Droplets size={16} />
+              </div>
+              <span>Premium Fragrance</span>
+            </div>
           </div>
 
-          {/* Quantity Selector */}
-          {product.stock > 0 && (
-            <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
-              <span style={{ fontSize: "12.5px", fontWeight: 600, color: "var(--dark-green)" }}>
-                Quantity:
-              </span>
-              <div className="qty-control" style={{ margin: 0 }}>
+          {/* Select Variant (Matches Screen 4) */}
+          <div className="pdp-variants-section">
+            <span className="pdp-variant-label">Select Variant</span>
+            <div className="pdp-variant-pills">
+              {variants.map(v => (
                 <button
-                  onClick={() => setQuantity(Math.max(1, quantity - 1))}
-                  aria-label="Decrease quantity"
+                  key={v}
+                  type="button"
+                  onClick={() => setSelectedVariant(v)}
+                  className={`variant-pill ${selectedVariant === v ? "active" : ""}`}
                 >
-                  <Minus size={14} />
+                  {v}
                 </button>
-                <span style={{ minWidth: "24px", textAlign: "center" }}>{quantity}</span>
-                <button
-                  onClick={() => setQuantity(Math.min(product.stock, quantity + 1))}
-                  disabled={quantity >= product.stock}
-                  aria-label="Increase quantity"
-                >
-                  <Plus size={14} />
-                </button>
-              </div>
+              ))}
             </div>
-          )}
+          </div>
 
-          {/* CTA Buttons */}
-          <div className="pdp-actions">
+          {/* Desktop Actions */}
+          <div className="pdp-desktop-actions">
+            <div className="qty-control">
+              <button onClick={() => setQuantity(Math.max(1, quantity - 1))} aria-label="Decrease">
+                <Minus size={14} />
+              </button>
+              <span>{quantity}</span>
+              <button onClick={() => setQuantity(quantity + 1)} aria-label="Increase">
+                <Plus size={14} />
+              </button>
+            </div>
+
             <button
               className="btn btn-primary"
-              style={{ flex: 1, padding: "16px", fontSize: "12px" }}
+              style={{ flex: 1 }}
+              onClick={handleAddToCart}
               disabled={product.stock <= 0}
-              onClick={() => add(product, quantity)}
             >
               <ShoppingBag size={16} />
-              {product.stock <= 0 ? "Out of Stock" : "Add to Shopping Bag"}
+              {justAdded ? "Added to Bag!" : "Add to Cart"}
             </button>
 
-            {product.stock > 0 && (
-              <button
-                className="btn btn-gold"
-                style={{ padding: "16px 24px", fontSize: "12px" }}
-                onClick={handleBuyNow}
-              >
-                Buy Now
-              </button>
-            )}
-
-            <button
-              className={`icon-btn ${inWishlist ? "active" : ""}`}
-              style={{
-                border: "1px solid var(--border-color)",
-                padding: "14px",
-                borderRadius: "var(--radius-sm)",
-                color: inWishlist ? "#C0392B" : "var(--forest-green)"
-              }}
-              onClick={() => toggleWishlist(product)}
-              aria-label="Toggle wishlist"
-            >
-              <Heart size={20} fill={inWishlist ? "currentColor" : "none"} />
+            <button className="btn btn-gold" onClick={handleBuyNow}>
+              Buy Now
             </button>
           </div>
 
-          {/* WhatsApp Direct Enquiry */}
-          <a
-            href={whatsappEnquiryUrl}
-            target="_blank"
-            rel="noopener noreferrer"
-            style={{
-              display: "inline-flex",
-              alignItems: "center",
-              justifyContent: "center",
-              gap: "8px",
-              border: "1px solid #25D366",
-              color: "#1B8C43",
-              background: "rgba(37, 211, 102, 0.06)",
-              padding: "12px",
-              borderRadius: "var(--radius-sm)",
-              fontSize: "12px",
-              fontWeight: 600
-            }}
-          >
-            <MessageCircle size={16} />
-            Enquire on WhatsApp (+91 6305630468)
-          </a>
-
-          {/* Specifications & Policy Accordions */}
-          <div style={{ marginTop: "16px", borderTop: "1px solid var(--border-color)" }}>
-            {/* Specs Accordion */}
-            <div className="accordion-item">
-              <button
-                className="accordion-header"
-                onClick={() => setOpenAccordion(openAccordion === "specs" ? "" : "specs")}
-              >
-                <span>Materials & Specifications</span>
-                {openAccordion === "specs" ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-              </button>
-              {openAccordion === "specs" && product.specifications && (
-                <div className="accordion-content">
-                  <table style={{ width: "100%", borderCollapse: "collapse" }}>
-                    <tbody>
-                      {Object.entries(product.specifications).map(([key, val]) => (
-                        <tr key={key} style={{ borderBottom: "1px solid var(--border-light)" }}>
-                          <td style={{ padding: "8px 0", fontWeight: 600, width: "35%", color: "var(--dark-green)" }}>
-                            {key}
-                          </td>
-                          <td style={{ padding: "8px 0", color: "var(--secondary-text)" }}>
-                            {val}
-                          </td>
-                        </tr>
-                      ))}
-                    </tbody>
-                  </table>
-                </div>
-              )}
+          {/* Specifications Accordion */}
+          {product.specifications && Object.keys(product.specifications).length > 0 && (
+            <div className="pdp-specs-box">
+              <h4 style={{ margin: "0 0 10px", fontSize: "14px", color: "var(--deep-charcoal)" }}>Product Details</h4>
+              <dl className="pdp-specs-list">
+                {Object.entries(product.specifications).map(([key, val]) => (
+                  <div key={key} className="pdp-spec-row">
+                    <dt>{key}:</dt>
+                    <dd>{val}</dd>
+                  </div>
+                ))}
+              </dl>
             </div>
-
-            {/* Delivery Accordion */}
-            <div className="accordion-item">
-              <button
-                className="accordion-header"
-                onClick={() => setOpenAccordion(openAccordion === "shipping" ? "" : "shipping")}
-              >
-                <span>Insured Shipping & Delivery</span>
-                {openAccordion === "shipping" ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-              </button>
-              {openAccordion === "shipping" && (
-                <div className="accordion-content">
-                  <p style={{ margin: "0 0 10px" }}>
-                    ✦ <b>Pan-India Delivery:</b> Estimated 3–5 business days for major metropolitan centres; 5–7 business days for regional pin codes.
-                  </p>
-                  <p style={{ margin: "0 0 10px" }}>
-                    ✦ <b>Courier Partners:</b> Dispatched manually through BlueDart, Delhivery, or DTDC with authentic tracking credentials shared via SMS/Email.
-                  </p>
-                  <p style={{ margin: 0 }}>
-                    ✦ <b>Packaging:</b> Signature velvet pouch and rigid gift-ready presentation box.
-                  </p>
-                </div>
-              )}
-            </div>
-
-            {/* Returns Accordion */}
-            <div className="accordion-item">
-              <button
-                className="accordion-header"
-                onClick={() => setOpenAccordion(openAccordion === "returns" ? "" : "returns")}
-              >
-                <span>Returns & Replacements</span>
-                {openAccordion === "returns" ? <ChevronUp size={18} /> : <ChevronDown size={18} />}
-              </button>
-              {openAccordion === "returns" && (
-                <div className="accordion-content">
-                  <p style={{ margin: 0 }}>
-                    We offer a 48-hour replacement guarantee for damaged, defective, or incorrect items reported with an unboxing video. Because of hygiene protocols for fashion jewellery, worn pieces are non-returnable. Please inspect your items upon delivery.
-                  </p>
-                </div>
-              )}
-            </div>
-          </div>
+          )}
         </div>
       </div>
 
+      {/* Sticky Bottom Bar for Android Mobile (Matches Screen 4) */}
+      <div className="android-sticky-pdp-bar">
+        <div className="pdp-bottom-stepper">
+          <button
+            onClick={() => setQuantity(Math.max(1, quantity - 1))}
+            className="stepper-btn"
+            aria-label="Decrease quantity"
+          >
+            <Minus size={14} />
+          </button>
+          <span className="stepper-num">{quantity}</span>
+          <button
+            onClick={() => setQuantity(quantity + 1)}
+            className="stepper-btn"
+            aria-label="Increase quantity"
+          >
+            <Plus size={14} />
+          </button>
+        </div>
+
+        <button
+          className={`pdp-bottom-add-btn ${justAdded ? "added" : ""}`}
+          onClick={handleAddToCart}
+          disabled={product.stock <= 0}
+        >
+          {justAdded ? (
+            <>
+              <Check size={16} /> Added!
+            </>
+          ) : (
+            <>
+              <ShoppingBag size={16} /> Add to Cart
+            </>
+          )}
+        </button>
+      </div>
+
       {/* Related Products */}
-      {relatedProducts.length > 0 && (
-        <section className="section" style={{ borderTop: "1px solid var(--border-color)", marginTop: "40px" }}>
-          <div className="section-head">
-            <div>
-              <p className="eyebrow">CURATED PAIRINGS</p>
-              <h2 className="section-title">You May Also Admire</h2>
-            </div>
-            <Link href="/shop" className="section-link">
-              View Complete Edit
+      {relatedProducts && relatedProducts.length > 0 && (
+        <section className="section-compact" style={{ marginTop: "48px" }}>
+          <div className="compact-section-header">
+            <h2 className="compact-section-title">Related Products</h2>
+            <Link href="/shop" className="compact-section-link">
+              View All <ArrowRight size={13} />
             </Link>
           </div>
-
-          <div className="product-grid">
-            {relatedProducts.map(p => (
+          <div className="android-products-grid">
+            {relatedProducts.slice(0, 4).map(p => (
               <ProductCard key={p.id} product={p} />
             ))}
           </div>

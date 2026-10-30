@@ -10,32 +10,54 @@ import { demoProducts, Product } from "@/lib/products";
 
 function FashionContent() {
   const [products, setProducts] = useState<Product[]>(
-    demoProducts.filter(p => p.category.toLowerCase() === "fashion")
+    demoProducts.filter(p =>
+      p.category.toLowerCase().includes("fashion") ||
+      p.category.toLowerCase().includes("clothing") ||
+      p.categorySlug === "fashion"
+    )
   );
+  const [selectedTag, setSelectedTag] = useState("all");
   const [priceRange, setPriceRange] = useState("all");
   const [sortBy, setSortBy] = useState<"newest" | "price-asc" | "price-desc">("newest");
-  const [inStockOnly, setInStockOnly] = useState(false);
 
   useEffect(() => {
     fetch("/api/products")
       .then(res => (res.ok ? res.json() : null))
       .then(data => {
         if (data?.products?.length > 0) {
-          setProducts(data.products.filter((p: Product) =>
-            p.category.toLowerCase() === "fashion"
-          ));
+          const fetched = data.products.filter((p: Product) =>
+            p.category.toLowerCase().includes("fashion") ||
+            p.category.toLowerCase().includes("clothing") ||
+            p.categorySlug === "fashion"
+          );
+          if (fetched.length > 0) setProducts(fetched);
         }
       })
       .catch(() => {});
   }, []);
 
+  const subcategories = [
+    { id: "all", label: "All" },
+    { id: "anime", label: "Anime" },
+    { id: "minimal", label: "Minimal" },
+    { id: "oversized", label: "Oversized" },
+    { id: "graphic", label: "Graphic" },
+    { id: "hoodie", label: "Hoodies" }
+  ];
+
   const filtered = useMemo(() => {
     return products
       .filter(p => {
-        if (inStockOnly && p.stock <= 0) return false;
-        if (priceRange === "under-1500" && p.price >= 1500) return false;
-        if (priceRange === "1500-2500" && (p.price < 1500 || p.price > 2500)) return false;
-        if (priceRange === "above-2500" && p.price <= 2500) return false;
+        if (selectedTag !== "all") {
+          const match =
+            p.name.toLowerCase().includes(selectedTag) ||
+            p.description.toLowerCase().includes(selectedTag) ||
+            (p.badge && p.badge.toLowerCase().includes(selectedTag));
+          if (!match) return false;
+        }
+        if (priceRange === "under-500" && p.price >= 500) return false;
+        if (priceRange === "500-1000" && (p.price < 500 || p.price > 1000)) return false;
+        if (priceRange === "above-1000" && p.price <= 1000) return false;
         return true;
       })
       .sort((a, b) => {
@@ -43,128 +65,59 @@ function FashionContent() {
         if (sortBy === "price-desc") return b.price - a.price;
         return 0;
       });
-  }, [products, priceRange, sortBy, inStockOnly]);
-
-  const reset = () => {
-    setPriceRange("all");
-    setSortBy("newest");
-    setInStockOnly(false);
-  };
+  }, [products, selectedTag, priceRange, sortBy]);
 
   return (
     <>
       <Header />
-      <main>
-        {/* Category Hero */}
-        <section
-          style={{
-            background: "linear-gradient(135deg, #FDFAF5 0%, var(--warm-cream) 60%, rgba(217, 193, 156, 0.15) 100%)",
-            borderBottom: "1px solid var(--border-color)",
-            padding: "60px 0 52px"
-          }}
-        >
-          <div className="wrap">
-            <nav style={{ fontSize: "12px", color: "var(--secondary-text)", marginBottom: "24px", display: "flex", gap: "8px", alignItems: "center" }}>
-              <Link href="/" style={{ color: "var(--secondary-text)" }}>Home</Link>
-              <span>›</span>
-              <span style={{ color: "var(--deep-charcoal)", fontWeight: 600 }}>Fashion Accessories</span>
-            </nav>
-
-            <div style={{ display: "grid", gridTemplateColumns: "1fr auto", alignItems: "flex-end", gap: "24px" }}>
-              <div>
-                <div style={{ display: "flex", alignItems: "center", gap: "12px", marginBottom: "12px" }}>
-                  <div style={{ width: "40px", height: "40px", borderRadius: "50%", background: "rgba(173, 128, 72, 0.12)", display: "grid", placeItems: "center", color: "var(--bronze-gold)" }}>
-                    <Sparkles size={20} />
-                  </div>
-                  <p className="eyebrow">OWLERA ATELIER</p>
-                </div>
-                <h1 style={{ fontFamily: "var(--font-serif)", fontSize: "clamp(36px, 4vw, 52px)", fontWeight: 400, color: "var(--deep-charcoal)", margin: "0 0 14px", lineHeight: 1.1 }}>
-                  Fashion <em style={{ fontStyle: "italic", color: "var(--bronze-gold)" }}>Accessories</em>
-                </h1>
-                <p style={{ color: "var(--secondary-text)", fontSize: "15px", maxWidth: "520px", lineHeight: 1.7, margin: 0 }}>
-                  Structured evening bags, luxurious silk accessories, statement belts and modern wardrobe essentials curated for the discerning style connoisseur.
-                </p>
-              </div>
-              <div style={{ textAlign: "right", fontSize: "13px", color: "var(--secondary-text)" }}>
-                <b style={{ fontSize: "28px", fontFamily: "var(--font-serif)", color: "var(--deep-charcoal)", display: "block" }}>{filtered.length}</b>
-                pieces
-              </div>
-            </div>
+      <main className="android-category-view">
+        {/* Category Hero Banner (Matches Screen 3) */}
+        <section className="category-hero-banner clothing-hero">
+          <div className="category-hero-backdrop">
+            <img
+              src="https://images.unsplash.com/photo-1521572267360-ee0c2909d518?auto=format&fit=crop&w=1200&q=85"
+              alt="Clothing collection apparel"
+              className="category-hero-img"
+            />
+            <div className="category-hero-overlay" />
+          </div>
+          <div className="wrap category-hero-content">
+            <h1 className="category-hero-title">Clothing</h1>
+            <p className="category-hero-subtitle">Wear Your Story</p>
           </div>
         </section>
 
-        {/* Filters + Grid */}
-        <div className="wrap" style={{ paddingTop: "36px", paddingBottom: "60px" }}>
-          <div style={{ display: "flex", justifyContent: "space-between", alignItems: "center", marginBottom: "28px", flexWrap: "wrap", gap: "12px", borderBottom: "1px solid var(--border-color)", paddingBottom: "20px" }}>
-            <div style={{ display: "flex", gap: "10px", flexWrap: "wrap" }}>
-              {[
-                { id: "all", label: "All Prices" },
-                { id: "under-1500", label: "Under ₹1,500" },
-                { id: "1500-2500", label: "₹1,500–₹2,500" },
-                { id: "above-2500", label: "Above ₹2,500" }
-              ].map(p => (
-                <button
-                  key={p.id}
-                  onClick={() => setPriceRange(p.id)}
-                  style={{
-                    padding: "7px 14px",
-                    fontSize: "12px",
-                    borderRadius: "var(--radius-sm)",
-                    border: "1px solid",
-                    borderColor: priceRange === p.id ? "var(--bronze-gold)" : "var(--border-color)",
-                    background: priceRange === p.id ? "rgba(173, 128, 72, 0.1)" : "transparent",
-                    color: priceRange === p.id ? "var(--bronze-gold)" : "var(--secondary-text)",
-                    fontWeight: priceRange === p.id ? 600 : 400,
-                    cursor: "pointer",
-                    transition: "all 0.2s"
-                  }}
-                >
-                  {p.label}
-                </button>
-              ))}
-              <label style={{ display: "flex", alignItems: "center", gap: "8px", fontSize: "12.5px", color: "var(--secondary-text)", cursor: "pointer" }}>
-                <input type="checkbox" checked={inStockOnly} onChange={e => setInStockOnly(e.target.checked)} />
-                In Stock Only
-              </label>
-            </div>
-
-            <div style={{ display: "flex", gap: "10px", alignItems: "center" }}>
-              <select
-                value={sortBy}
-                onChange={e => setSortBy(e.target.value as any)}
-                className="sort-select"
-                aria-label="Sort fashion accessories"
+        {/* Sub-Category Pills (Matches Screen 3) */}
+        <div className="wrap subcategory-pills-bar">
+          <div className="subcategory-pills-scroll">
+            {subcategories.map(sub => (
+              <button
+                key={sub.id}
+                onClick={() => setSelectedTag(sub.id)}
+                className={`subcategory-pill ${selectedTag === sub.id ? "active" : ""}`}
               >
-                <option value="newest">Featured</option>
-                <option value="price-asc">Price: Low to High</option>
-                <option value="price-desc">Price: High to Low</option>
-              </select>
-              <button onClick={reset} style={{ fontSize: "11.5px", color: "var(--secondary-text)", display: "flex", alignItems: "center", gap: "5px" }}>
-                <RotateCcw size={12} /> Reset
+                {sub.label}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        {/* Grid & Products */}
+        <div className="wrap" style={{ paddingTop: "14px", paddingBottom: "70px" }}>
+          {filtered.length === 0 ? (
+            <div style={{ textAlign: "center", padding: "60px 20px", background: "#FFFFFF", borderRadius: "12px", border: "1px solid var(--border-color)" }}>
+              <p style={{ color: "var(--secondary-text)", fontSize: "14px" }}>No items found in this subcategory.</p>
+              <button onClick={() => setSelectedTag("all")} className="btn btn-primary" style={{ marginTop: "12px" }}>
+                View All Clothing
               </button>
             </div>
-          </div>
-
-          {filtered.length === 0 ? (
-            <div style={{ textAlign: "center", padding: "80px 20px", background: "#FFFFFF", border: "1px solid var(--border-color)", borderRadius: "var(--radius-sm)" }}>
-              <Sparkles size={40} color="var(--border-color)" style={{ margin: "0 auto 16px" }} />
-              <h3 style={{ fontFamily: "var(--font-serif)", fontSize: "24px", color: "var(--deep-charcoal)", margin: "0 0 10px" }}>No pieces match your filters</h3>
-              <p style={{ color: "var(--secondary-text)", fontSize: "13px", marginBottom: "20px" }}>Try adjusting the price range or availability filter.</p>
-              <button onClick={reset} className="btn btn-primary">Reset Filters</button>
-            </div>
           ) : (
-            <div className="product-grid">
+            <div className="android-products-grid">
               {filtered.map(product => (
                 <ProductCard key={product.id} product={product} />
               ))}
             </div>
           )}
-
-          <div style={{ textAlign: "center", marginTop: "48px" }}>
-            <Link href="/shop" className="section-link">
-              Browse Complete Catalogue <ArrowRight size={14} />
-            </Link>
-          </div>
         </div>
       </main>
       <Footer />

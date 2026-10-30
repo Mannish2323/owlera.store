@@ -3,7 +3,7 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Search, ShoppingBag, Heart, Menu, X, ArrowRight, Check, User, Truck } from "lucide-react";
+import { Search, ShoppingBag, Heart, Menu, X, ArrowRight, ArrowLeft, Check, User, Truck } from "lucide-react";
 import { useCart } from "./cart-provider";
 import { useWishlist } from "./wishlist-provider";
 
@@ -139,14 +139,30 @@ export function Header() {
       <header className="site-header">
         <div className="wrap nav-container">
           {/* Mobile menu trigger on the left */}
-          <button
-            className="mobile-menu-btn"
-            aria-label="Toggle navigation menu"
-            aria-expanded={mobileMenuOpen}
-            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-          >
-            {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
-          </button>
+          {pathname === "/" ? (
+            <button
+              className="mobile-menu-btn"
+              aria-label="Toggle navigation menu"
+              aria-expanded={mobileMenuOpen}
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            >
+              {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
+            </button>
+          ) : (
+            <button
+              className="mobile-menu-btn"
+              aria-label="Navigate back"
+              onClick={() => {
+                if (typeof window !== "undefined" && window.history.length > 1) {
+                  window.history.back();
+                } else {
+                  window.location.href = "/";
+                }
+              }}
+            >
+              <ArrowLeft size={22} />
+            </button>
+          )}
 
           {/* Official Brand Logo Asset centered */}
           <Link href="/" className="brand-logo" aria-label="OWLERA Homepage">
@@ -187,12 +203,12 @@ export function Header() {
             </button>
 
             {/* Customer Account */}
-            <Link href="/account" className="action-btn" aria-label="Customer Account">
+            <Link href="/account" className="action-btn header-desktop-action" aria-label="Customer Account">
               <User size={18} />
             </Link>
 
             {/* Wishlist */}
-            <Link href="/wishlist" className="action-btn" aria-label="View Wishlist">
+            <Link href="/wishlist" className="action-btn header-desktop-action" aria-label="View Wishlist">
               <Heart size={18} />
               {wishlistCount > 0 && <span className="action-badge">{wishlistCount}</span>}
             </Link>

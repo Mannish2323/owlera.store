@@ -60,10 +60,10 @@ export function ProductCard({ product }: ProductCardProps) {
           aria-label={inWishlist ? `Remove ${product.name} from wishlist` : `Save ${product.name} to wishlist`}
           type="button"
         >
-          <Heart size={16} fill={inWishlist ? "currentColor" : "none"} />
+          <Heart size={14} fill={inWishlist ? "currentColor" : "none"} />
         </button>
 
-        {/* Quick Add To Bag Action */}
+        {/* Desktop Quick Add Bar */}
         <div className="product-quick-actions">
           {product.stock > 0 ? (
             <button
@@ -102,22 +102,35 @@ export function ProductCard({ product }: ProductCardProps) {
           </Link>
         </h3>
 
-        <div className="product-price-container">
-          <span className="product-current-price">{money(product.price)}</span>
-          {product.compareAt && product.compareAt > product.price && (
-            <>
-              <span className="product-original-price">{money(product.compareAt)}</span>
-              {discountPercent && (
-                <span className="product-discount-rate">{discountPercent}% OFF</span>
-              )}
-            </>
-          )}
+        <div className="product-bottom-row">
+          <div className="product-price-container">
+            <span className="product-current-price">{money(product.price)}</span>
+            {product.compareAt && product.compareAt > product.price && (
+              <>
+                <span className="product-original-price">{money(product.compareAt)}</span>
+                {discountPercent && (
+                  <span className="product-discount-rate">{discountPercent}% OFF</span>
+                )}
+              </>
+            )}
+          </div>
+
+          {/* Compact Mobile Add-to-Cart Button (Screens 2 & 3 in reference) */}
+          <button
+            className={`compact-cart-btn ${justAdded ? "added" : ""}`}
+            onClick={handleQuickAdd}
+            disabled={product.stock <= 0}
+            type="button"
+            aria-label={justAdded ? "Added to cart" : `Add ${product.name} to cart`}
+          >
+            {justAdded ? <Check size={13} /> : <ShoppingBag size={13} />}
+          </button>
         </div>
 
         {/* Stock urgency only when genuinely low */}
         {product.stock > 0 && product.stock <= 5 && (
           <div className="product-low-stock-pill">
-            Only {product.stock} available
+            Only {product.stock} left
           </div>
         )}
       </div>
