@@ -137,7 +137,7 @@ function ShopContent() {
             />
           </div>
 
-          <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
+          <div className="shop-controls-bar">
             <span style={{ fontSize: "12.5px", color: "var(--secondary-text)" }}>
               Showing <b>{filteredProducts.length}</b> {filteredProducts.length === 1 ? "piece" : "pieces"}
             </span>
@@ -167,7 +167,7 @@ function ShopContent() {
         {/* Main Shop Grid & Sidebar */}
         <div className="shop-layout">
           {/* Filters Sidebar */}
-          <aside className="filters-sidebar">
+          <aside className={`filters-sidebar ${mobileFilterOpen ? "is-open" : ""}`}>
             {/* Category Filter */}
             <div className="filter-block">
               <h4>Category</h4>

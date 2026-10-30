@@ -5,7 +5,7 @@ import { MessageCircle } from "lucide-react";
 
 export function WhatsAppFloat() {
   const whatsappUrl = `https://wa.me/916305630468?text=${encodeURIComponent(
-    "Hello OWLERA! I would like to enquire about your products and services."
+    "Hello OWLERA Concierge! I would like to enquire about your jewellery, gifting collections, or pan-India delivery."
   )}`;
 
   return (
@@ -14,10 +14,11 @@ export function WhatsAppFloat() {
       target="_blank"
       rel="noopener noreferrer"
       className="floating-whatsapp"
-      aria-label="Chat with OWLERA on WhatsApp"
-      title="Chat with OWLERA on WhatsApp (+91 6305630468)"
+      aria-label="Chat with OWLERA Concierge on WhatsApp (+91 6305630468)"
+      title="Chat with OWLERA Concierge on WhatsApp (+91 6305630468)"
     >
-      <MessageCircle />
+      <MessageCircle size={22} />
+      <span className="sr-only">Chat with OWLERA Concierge on WhatsApp</span>
     </a>
   );
 }

@@ -1,6 +1,6 @@
 import React from "react";
 import Link from "next/link";
-import { ArrowRight, Sparkles, Heart, Shield, Award } from "lucide-react";
+import { ArrowRight, Sparkles, Heart, Award } from "lucide-react";
 import { Header } from "@/components/header";
 import { Footer } from "@/components/footer";
 
@@ -9,41 +9,26 @@ export default function AboutPage() {
     <>
       <Header />
 
-      <main>
-        {/* Hero */}
-        <section
-          style={{
-            background: "var(--deep-charcoal)",
-            color: "var(--warm-cream)",
-            padding: "80px 0 60px",
-            textAlign: "center"
-          }}
-        >
-          <div className="wrap" style={{ maxWidth: "720px", margin: "0 auto" }}>
-            <p className="eyebrow" style={{ color: "var(--bronze-gold)", justifyContent: "center" }}>
+      <main className="about-page-main">
+        {/* Editorial Brand Hero */}
+        <section className="about-hero">
+          <div className="wrap about-hero-container">
+            <p className="eyebrow about-eyebrow">
               <Sparkles size={14} /> THE OWLERA HERITAGE
             </p>
-            <h1
-              style={{
-                fontFamily: "var(--font-serif)",
-                fontSize: "clamp(42px, 5vw, 60px)",
-                fontWeight: 400,
-                margin: "12px 0 18px",
-                color: "var(--warm-cream)"
-              }}
-            >
+            <h1 className="about-headline">
               Elegance that whispers.
             </h1>
-            <p style={{ fontSize: "16px", lineHeight: "1.9", color: "rgba(247, 243, 233, 0.85)" }}>
+            <p className="about-lead">
               Founded on the belief that everyday moments deserve an aura of quiet luxury, OWLERA creates timeless jewellery, accessories and tactile treasures that seamlessly fit your rhythm.
             </p>
           </div>
         </section>
 
         {/* Story Section */}
-        <section className="section wrap" style={{ maxWidth: "860px" }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: "28px", fontSize: "15px", lineHeight: "1.9", color: "var(--primary-text)" }}>
-            <h2 style={{ fontFamily: "var(--font-serif)", fontSize: "32px", color: "var(--deep-charcoal)", margin: 0 }}>
+        <section className="section wrap about-story-section">
+          <div className="about-story-body">
+            <h2 className="about-section-heading">
               The Inspiration Behind the Name
             </h2>
             <p>
@@ -54,54 +39,47 @@ export default function AboutPage() {
             </p>
           </div>
 
-          {/* Pillars */}
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fit, minmax(240px, 1fr))",
-              gap: "24px",
-              marginTop: "50px"
-            }}
-          >
-            <div style={{ background: "#FFFFFF", border: "1px solid var(--border-color)", padding: "28px", borderRadius: "var(--radius-sm)" }}>
-              <div style={{ color: "var(--bronze-gold)", marginBottom: "12px" }}>
+          {/* Core Brand Pillars */}
+          <div className="about-pillars-grid">
+            <div className="about-pillar-card">
+              <div className="about-pillar-icon">
                 <Sparkles size={24} />
               </div>
-              <h3 style={{ fontFamily: "var(--font-serif)", fontSize: "20px", margin: "0 0 8px", color: "var(--deep-charcoal)" }}>
+              <h3 className="about-pillar-title">
                 Enduring Craft
               </h3>
-              <p style={{ fontSize: "13px", color: "var(--secondary-text)", margin: 0 }}>
+              <p className="about-pillar-desc">
                 18k gold vacuum plating engineered to retain warmth, high reflectance and luster across years of routine wear.
               </p>
             </div>
 
-            <div style={{ background: "#FFFFFF", border: "1px solid var(--border-color)", padding: "28px", borderRadius: "var(--radius-sm)" }}>
-              <div style={{ color: "var(--bronze-gold)", marginBottom: "12px" }}>
+            <div className="about-pillar-card">
+              <div className="about-pillar-icon">
                 <Heart size={24} />
               </div>
-              <h3 style={{ fontFamily: "var(--font-serif)", fontSize: "20px", margin: "0 0 8px", color: "var(--deep-charcoal)" }}>
+              <h3 className="about-pillar-title">
                 Hypoallergenic Comfort
               </h3>
-              <p style={{ fontSize: "13px", color: "var(--secondary-text)", margin: 0 }}>
+              <p className="about-pillar-desc">
                 Zero nickel, zero lead. Designed specifically for sensitive skin with featherlight balance and smooth rounded posts.
               </p>
             </div>
 
-            <div style={{ background: "#FFFFFF", border: "1px solid var(--border-color)", padding: "28px", borderRadius: "var(--radius-sm)" }}>
-              <div style={{ color: "var(--bronze-gold)", marginBottom: "12px" }}>
+            <div className="about-pillar-card">
+              <div className="about-pillar-icon">
                 <Award size={24} />
               </div>
-              <h3 style={{ fontFamily: "var(--font-serif)", fontSize: "20px", margin: "0 0 8px", color: "var(--deep-charcoal)" }}>
+              <h3 className="about-pillar-title">
                 Gifting Rituals
               </h3>
-              <p style={{ fontSize: "13px", color: "var(--secondary-text)", margin: 0 }}>
+              <p className="about-pillar-desc">
                 Presented in signature rigid warm ivory and dark charcoal presentation boxes with hot-stamped gold foil and custom microfiber travel pouches.
               </p>
             </div>
           </div>
 
-          <div style={{ textAlign: "center", marginTop: "50px" }}>
-            <Link href="/shop" className="btn btn-primary">
+          <div className="about-cta-wrap">
+            <Link href="/shop" className="btn btn-primary about-cta-btn">
               Discover The Collection <ArrowRight size={15} />
             </Link>
           </div>

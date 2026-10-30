@@ -144,14 +144,7 @@ export default function CartPage() {
                 {items.map(item => (
                   <div
                     key={`${item.product.id}-${item.variant || ""}`}
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns: "80px 1fr auto",
-                      gap: "20px",
-                      padding: "20px 0",
-                      borderBottom: "1px solid var(--border-light)",
-                      alignItems: "center"
-                    }}
+                    className="cart-item-row-responsive"
                   >
                     <img
                       src={item.product.image}

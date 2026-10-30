@@ -93,79 +93,58 @@ export default function WishlistPage() {
             </Link>
           </div>
         ) : (
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
-              gap: "28px"
-            }}
-          >
+          <div className="product-grid" style={{ marginTop: "24px" }}>
             {wishlist.map(product => (
               <div
                 key={product.id}
+                className="premium-product-card"
                 style={{
                   background: "#FFFFFF",
                   border: "1px solid var(--border-color)",
                   borderRadius: "var(--radius-sm)",
-                  overflow: "hidden",
-                  display: "flex",
-                  flexDirection: "column"
+                  overflow: "hidden"
                 }}
               >
-                <div style={{ position: "relative", aspectRatio: "1/1", background: "#EFEBE1" }}>
-                  <img
-                    src={product.image}
-                    alt={product.name}
-                    style={{ width: "100%", height: "100%", objectFit: "cover" }}
-                  />
+                <div className="product-media-wrap">
+                  <Link href={`/products/${product.slug}`} className="product-media-link" aria-label={`View ${product.name}`}>
+                    <img
+                      src={product.image}
+                      alt={product.name}
+                      className="product-image"
+                      loading="lazy"
+                    />
+                  </Link>
                   <button
                     onClick={() => removeFromWishlist(product.id)}
-                    aria-label="Remove from wishlist"
-                    style={{
-                      position: "absolute",
-                      top: "10px",
-                      right: "10px",
-                      width: "32px",
-                      height: "32px",
-                      borderRadius: "50%",
-                      background: "rgba(255, 255, 255, 0.9)",
-                      display: "grid",
-                      placeItems: "center",
-                      color: "#C0392B"
-                    }}
+                    aria-label={`Remove ${product.name} from wishlist`}
+                    className="wishlist-action-btn"
+                    style={{ color: "#C0392B" }}
                   >
-                    <Trash2 size={15} />
+                    <Trash2 size={14} />
                   </button>
                 </div>
 
-                <div style={{ padding: "18px", display: "flex", flexDirection: "column", flex: 1, gap: "10px" }}>
-                  <span style={{ fontSize: "10px", letterSpacing: "1px", textTransform: "uppercase", color: "var(--muted-gold)", fontWeight: 600 }}>
+                <div className="product-details" style={{ padding: "12px 14px 16px" }}>
+                  <span className="product-dept-label">
                     {product.category}
                   </span>
-                  <Link href={`/products/${product.slug}`}>
-                    <h3
-                      style={{
-                        fontFamily: "var(--font-serif)",
-                        fontSize: "18px",
-                        margin: 0,
-                        color: "var(--dark-green)"
-                      }}
-                    >
+                  <h3 className="product-card-title">
+                    <Link href={`/products/${product.slug}`}>
                       {product.name}
-                    </h3>
-                  </Link>
-                  <b style={{ color: "var(--forest-green)", fontSize: "15px" }}>
-                    {money(product.price)}
-                  </b>
+                    </Link>
+                  </h3>
+                  <div className="product-price-container">
+                    <span className="product-current-price">{money(product.price)}</span>
+                  </div>
 
-                  <div style={{ marginTop: "auto", paddingTop: "12px" }}>
+                  <div style={{ marginTop: "10px" }}>
                     <button
                       className="btn btn-primary"
-                      style={{ width: "100%", padding: "12px", fontSize: "11px" }}
+                      style={{ width: "100%", padding: "10px", fontSize: "10.5px" }}
                       disabled={product.stock <= 0}
                       onClick={() => handleMoveToCart(product)}
                     >
-                      <ShoppingBag size={14} />
+                      <ShoppingBag size={13} />
                       {product.stock <= 0 ? "Out of Stock" : "Move to Bag"}
                     </button>
                   </div>

@@ -8,3 +8,5 @@ node_modules
 *.log
 owlerashop-source.zip
 *.tsbuildinfo
+
+tests/screenshots/

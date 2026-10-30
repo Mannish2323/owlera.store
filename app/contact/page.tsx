@@ -40,7 +40,7 @@ export default function ContactPage() {
           </p>
         </div>
 
-        <div style={{ display: "grid", gridTemplateColumns: "1fr 1.2fr", gap: "48px" }}>
+        <div className="contact-grid">
           {/* Direct channels */}
           <div>
             {/* WhatsApp Card */}

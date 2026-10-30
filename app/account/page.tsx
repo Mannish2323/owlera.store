@@ -150,7 +150,7 @@ export default function AccountPage() {
         </div>
 
         {/* Account Content Grid */}
-        <div style={{ display: "grid", gridTemplateColumns: "240px 1fr", gap: "40px", alignItems: "start" }}>
+        <div className="account-grid">
           {/* Navigation Sidebar */}
           <aside
             style={{

@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Search, ShoppingBag, Heart, Menu, X, ArrowRight, Check, User, Truck } from "lucide-react";
@@ -15,6 +15,39 @@ export function Header() {
   const [searchOpen, setSearchOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState("");
   const [copiedCoupon, setCopiedCoupon] = useState(false);
+  const [mobilePromoIndex, setMobilePromoIndex] = useState(0);
+
+  // Rotate mobile promotional messages gracefully without taking up excessive screen space
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setMobilePromoIndex(prev => (prev === 0 ? 1 : 0));
+    }, 4500);
+    return () => clearInterval(timer);
+  }, []);
+
+  // Handle ESC key to dismiss mobile drawer or search
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") {
+        setMobileMenuOpen(false);
+        setSearchOpen(false);
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+    return () => window.removeEventListener("keydown", handleKeyDown);
+  }, []);
+
+  // Prevent background scroll when mobile drawer is active
+  useEffect(() => {
+    if (mobileMenuOpen) {
+      document.body.style.overflow = "hidden";
+    } else {
+      document.body.style.overflow = "";
+    }
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [mobileMenuOpen]);
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -47,9 +80,16 @@ export function Header() {
   return (
     <>
       {/* Top Announcement Bar */}
-      <div className="announcement-bar">
+      <div className="announcement-bar" role="region" aria-label="Store Announcements">
         <div className="wrap announcement-inner">
-          <div className="announcement-text" onClick={handleCopyCoupon} role="button" tabIndex={0}>
+          {/* Desktop full announcement */}
+          <div
+            className="announcement-text announcement-desktop-view"
+            onClick={handleCopyCoupon}
+            role="button"
+            tabIndex={0}
+            aria-label="Complimentary shipping and 10% coupon promo. Click to copy coupon."
+          >
             <span>Complimentary Pan-India Insured Shipping on orders above ₹999</span>
             <span className="announcement-separator">•</span>
             <span className="announcement-promo">
@@ -61,6 +101,28 @@ export function Header() {
                 <span>Use code <strong>OWLFIRST10</strong> for 10% off</span>
               )}
             </span>
+          </div>
+
+          {/* Mobile rotating compact ticker (single clean line, zero awkward wrapping) */}
+          <div
+            className="announcement-text announcement-mobile-view"
+            onClick={handleCopyCoupon}
+            role="button"
+            tabIndex={0}
+            aria-live="polite"
+            aria-label="Click to copy 10% discount code OWLFIRST10"
+          >
+            {copiedCoupon ? (
+              <span className="coupon-copied">
+                <Check size={12} /> OWLFIRST10 Applied (10% Off)
+              </span>
+            ) : mobilePromoIndex === 0 ? (
+              <span>Complimentary Pan-India Shipping over ₹999</span>
+            ) : (
+              <span>
+                Use code <strong>OWLFIRST10</strong> for 10% off ✦ Tap to copy
+              </span>
+            )}
           </div>
 
           <div className="announcement-help">
@@ -76,16 +138,17 @@ export function Header() {
       {/* Main Header */}
       <header className="site-header">
         <div className="wrap nav-container">
-          {/* Mobile menu trigger */}
+          {/* Mobile menu trigger on the left */}
           <button
             className="mobile-menu-btn"
             aria-label="Toggle navigation menu"
+            aria-expanded={mobileMenuOpen}
             onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
           >
             {mobileMenuOpen ? <X size={22} /> : <Menu size={22} />}
           </button>
 
-          {/* Official Brand Logo Asset */}
+          {/* Official Brand Logo Asset centered */}
           <Link href="/" className="brand-logo" aria-label="OWLERA Homepage">
             <img
               src="/logo-transparent.png"
@@ -112,25 +175,25 @@ export function Header() {
             })}
           </nav>
 
-          {/* Actions: Search, Account, Wishlist, Cart */}
-          <div className="header-actions">
+          {/* Actions: Search, Account, Wishlist, Cart evenly aligned on the right */}
+          <div className="header-actions" aria-label="Quick Actions">
             {/* Search Toggle */}
             <button
               className="action-btn"
               aria-label="Search catalogue"
               onClick={() => setSearchOpen(!searchOpen)}
             >
-              <Search size={19} />
+              <Search size={18} />
             </button>
 
-            {/* Account */}
+            {/* Customer Account */}
             <Link href="/account" className="action-btn" aria-label="Customer Account">
-              <User size={19} />
+              <User size={18} />
             </Link>
 
             {/* Wishlist */}
             <Link href="/wishlist" className="action-btn" aria-label="View Wishlist">
-              <Heart size={19} />
+              <Heart size={18} />
               {wishlistCount > 0 && <span className="action-badge">{wishlistCount}</span>}
             </Link>
 
@@ -140,7 +203,7 @@ export function Header() {
               aria-label="Open Shopping Bag"
               onClick={() => setCartOpen(true)}
             >
-              <ShoppingBag size={19} />
+              <ShoppingBag size={18} />
               {cartCount > 0 && <span className="action-badge">{cartCount}</span>}
             </button>
           </div>
@@ -148,7 +211,7 @@ export function Header() {
 
         {/* Expandable Search Drawer */}
         {searchOpen && (
-          <div className="search-dropdown">
+          <div className="search-dropdown" role="search">
             <div className="wrap">
               <form onSubmit={handleSearchSubmit} className="search-form">
                 <Search size={18} className="search-icon" />
@@ -159,6 +222,7 @@ export function Header() {
                   onChange={e => setSearchQuery(e.target.value)}
                   autoFocus
                   className="search-input"
+                  aria-label="Search products"
                 />
                 <button type="submit" className="search-submit">
                   Search
@@ -180,14 +244,20 @@ export function Header() {
       {/* Mobile Drawer Navigation */}
       {mobileMenuOpen && (
         <div className="mobile-drawer-overlay" onClick={() => setMobileMenuOpen(false)}>
-          <div className="mobile-drawer" onClick={e => e.stopPropagation()}>
+          <div
+            className="mobile-drawer"
+            role="dialog"
+            aria-modal="true"
+            aria-label="Mobile Navigation Drawer"
+            onClick={e => e.stopPropagation()}
+          >
             <div className="mobile-drawer-header">
               <Link href="/" className="brand-logo" onClick={() => setMobileMenuOpen(false)} aria-label="OWLERA Homepage">
                 <img
                   src="/logo-transparent.png"
                   alt="OWLERA"
                   className="brand-logo-img"
-                  style={{ height: "30px", width: "auto" }}
+                  style={{ height: "26px", width: "auto" }}
                 />
               </Link>
               <button
@@ -200,19 +270,20 @@ export function Header() {
             </div>
 
             {/* Mobile Search */}
-            <form onSubmit={handleSearchSubmit} className="mobile-search-form">
+            <form onSubmit={handleSearchSubmit} className="mobile-search-form" role="search">
               <input
                 type="text"
                 placeholder="Search products & categories…"
                 value={searchQuery}
                 onChange={e => setSearchQuery(e.target.value)}
+                aria-label="Search store"
               />
-              <button type="submit">
+              <button type="submit" aria-label="Submit search">
                 <Search size={16} />
               </button>
             </form>
 
-            <nav className="mobile-nav-list">
+            <nav className="mobile-nav-list" aria-label="Mobile categories and services">
               <div className="mobile-nav-section-title">Departments</div>
               {navLinks.map(link => (
                 <Link
@@ -227,6 +298,10 @@ export function Header() {
               ))}
 
               <div className="mobile-nav-section-title" style={{ marginTop: "16px" }}>Services & Care</div>
+              <Link href="/wishlist" className="mobile-nav-item" onClick={() => setMobileMenuOpen(false)}>
+                <span>My Wishlist ({wishlistCount})</span>
+                <Heart size={14} />
+              </Link>
               <Link href="/track-order" className="mobile-nav-item" onClick={() => setMobileMenuOpen(false)}>
                 <span>Track Order</span>
                 <Truck size={14} />
